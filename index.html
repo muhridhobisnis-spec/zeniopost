@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
+<html lang="id"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- Kunci Mode Terang (Light Mode Only) walau perangkat pengguna memakai Mode Gelap -->
@@ -59,12 +58,162 @@
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
         .animate-fade { animation: fadeIn 0.35s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Styling Rich Text Editor Berita */
+        .rich-editor {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        .rich-editor:empty:before {
+            content: attr(data-placeholder);
+            color: #94a3b8;
+            pointer-events: none;
+            display: block;
+        }
+        .rich-editor b, .rich-editor strong, .article-rich-content b, .article-rich-content strong {
+            font-weight: 800;
+        }
+        .rich-editor i, .rich-editor em, .article-rich-content i, .article-rich-content em {
+            font-style: italic;
+        }
+        .rich-editor u, .article-rich-content u {
+            text-decoration: underline;
+        }
+        .article-rich-content p, .article-rich-content div {
+            margin-bottom: 0.5rem;
+        }
     </style>
-</head>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.right-4{right:1rem}.top-20{top:5rem}.bottom-0{bottom:0px}.left-0{left:0px}.left-3\.5{left:0.875rem}.right-0{right:0px}.right-3{right:0.75rem}.top-0{top:0px}.top-1\/2{top:50%}.top-16{top:4rem}.left-3{left:0.75rem}.top-3{top:0.75rem}.z-\[90\]{z-index:90}.z-\[99\]{z-index:99}.z-0{z-index:0}.z-30{z-index:30}.z-50{z-index:50}.col-span-full{grid-column:1 / -1}.mx-auto{margin-left:auto;margin-right:auto}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-6{margin-bottom:1.5rem}.mt-0\.5{margin-top:0.125rem}.mt-2{margin-top:0.5rem}.mb-1\.5{margin-bottom:0.375rem}.ml-auto{margin-left:auto}.line-clamp-2{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}.line-clamp-3{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-16{height:4rem}.h-9{height:2.25rem}.h-\[75px\]{height:75px}.h-\[calc\(100vh-64px\)\]{height:calc(100vh - 64px)}.h-full{height:100%}.h-52{height:13rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-40{height:10rem}.h-5{height:1.25rem}.max-h-\[380px\]{max-height:380px}.min-h-screen{min-height:100vh}.min-h-\[calc\(100vh-64px\)\]{min-height:calc(100vh - 64px)}.min-h-\[200px\]{min-height:200px}.w-full{width:100%}.w-5{width:1.25rem}.w-64{width:16rem}.w-9{width:2.25rem}.w-auto{width:auto}.w-7{width:1.75rem}.w-8{width:2rem}.w-px{width:1px}.min-w-0{min-width:0px}.max-w-6xl{max-width:72rem}.max-w-\[150px\]{max-width:150px}.max-w-xl{max-width:36rem}.max-w-2xl{max-width:42rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;user-select:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.justify-around{justify-content:space-around}.gap-2{gap:0.5rem}.gap-1\.5{gap:0.375rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-1{gap:0.25rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-xl{border-radius:0.75rem}.rounded-lg{border-radius:0.5rem}.rounded-t-3xl{border-top-left-radius:1.5rem;border-top-right-radius:1.5rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-blue-100{--tw-border-opacity:1;border-color:rgb(219 234 254 / var(--tw-border-opacity, 1))}.bg-\[\#f4f7fb\]{--tw-bg-opacity:1;background-color:rgb(244 247 251 / var(--tw-bg-opacity, 1))}.bg-slate-900\/60{background-color:rgb(15 23 42 / 0.6)}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.bg-slate-50\/60{background-color:rgb(248 250 252 / 0.6)}.bg-slate-900\/75{background-color:rgb(15 23 42 / 0.75)}.bg-slate-100\/90{background-color:rgb(241 245 249 / 0.9)}.bg-slate-300{--tw-bg-opacity:1;background-color:rgb(203 213 225 / var(--tw-bg-opacity, 1))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-cover{background-size:cover}.bg-center{background-position:center}.object-contain{object-fit:contain}.object-cover{object-fit:cover}.p-4{padding:1rem}.p-12{padding:3rem}.p-6{padding:1.5rem}.p-2\.5{padding:0.625rem}.p-5{padding:1.25rem}.p-2{padding:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pb-24{padding-bottom:6rem}.pl-9{padding-left:2.25rem}.pr-8{padding-right:2rem}.pb-3{padding-bottom:0.75rem}.pb-5{padding-bottom:1.25rem}.pt-3{padding-top:0.75rem}.pr-2{padding-right:0.5rem}.text-center{text-align:center}.text-\[10px\]{font-size:10px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-\[11px\]{font-size:11px}.text-2xl{font-size:1.5rem;line-height:2rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.tracking-wider{letter-spacing:0.05em}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-0{opacity:0}.shadow-\[0_-10px_20px_rgba\(0\2c 0\2c 0\2c 0\.05\)\]{--tw-shadow:0 -10px 20px rgba(0,0,0,0.05);--tw-shadow-colored:0 -10px 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-500{transition-duration:500ms}.file\:mr-4::file-selector-button{margin-right:1rem}.file\:rounded-lg::file-selector-button{border-radius:0.5rem}.file\:border-0::file-selector-button{border-width:0px}.file\:bg-blue-600::file-selector-button{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.file\:px-4::file-selector-button{padding-left:1rem;padding-right:1rem}.file\:py-2::file-selector-button{padding-top:0.5rem;padding-bottom:0.5rem}.file\:text-sm::file-selector-button{font-size:0.875rem;line-height:1.25rem}.file\:font-bold::file-selector-button{font-weight:700}.file\:text-white::file-selector-button{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus-within\:border-blue-500:focus-within{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus-within\:ring-2:focus-within{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus-within\:ring-blue-500\/15:focus-within{--tw-ring-color:rgb(59 130 246 / 0.15)}.hover\:border-blue-300:hover{--tw-border-opacity:1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-50\/40:hover{background-color:rgb(239 246 255 / 0.4)}.hover\:bg-blue-600:hover{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.hover\:bg-white:hover{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-slate-600:hover{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:shadow-sm:hover{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:bg-white:focus{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.group:hover .group-hover\:scale-105{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group\/link:hover .group-hover\/link\:text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.group\/link:hover .group-hover\/link\:underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}@media (min-width: 640px){.sm\:inline{display:inline}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}@media (min-width: 768px){.md\:ml-64{margin-left:16rem}.md\:flex{display:flex}.md\:hidden{display:none}.md\:h-10{height:2.5rem}.md\:h-11{height:2.75rem}.md\:w-10{width:2.5rem}.md\:max-w-\[200px\]{max-width:200px}.md\:gap-2{gap:0.5rem}.md\:gap-4{gap:1rem}.md\:p-8{padding:2rem}.md\:px-8{padding-left:2rem;padding-right:2rem}.md\:py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.md\:pb-10{padding-bottom:2.5rem}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-sm{font-size:0.875rem;line-height:1.25rem}.md\:text-base{font-size:1rem;line-height:1.5rem}}@media (min-width: 1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}</style></head>
 <body class="bg-[#f4f7fb] text-slate-800 antialiased min-h-screen flex flex-col">
 
     <!-- Container Utama Render JS -->
-    <div id="app" class="flex flex-col min-h-screen w-full relative"></div>
+    <div id="app" class="flex flex-col min-h-screen w-full relative">
+                
+            <header class="bg-white sticky top-0 z-50 w-full h-16 shadow-sm flex justify-between items-center gap-2 md:gap-4 px-3 md:px-8 border-b border-slate-100">
+                <!-- Logo di Kiri Atas (Tanpa Teks Zeniopost) -->
+                <div class="flex items-center cursor-pointer h-full py-1.5 shrink-0" onclick="app.navigate('home')" title="Beranda Zeniopost">
+                    <img src="https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/gyiscmvuxv4olklenjcg" alt="Logo Zeniopost" fetchpriority="high" decoding="async" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://wsrv.nl/?url=https%3A%2F%2Fres.cloudinary.com%2Fdtz0urit6%2Fimage%2Fupload%2Fq_auto%3Abest%2Cf_jpg%2Fcloudinary-tools-uploads%2Fgyiscmvuxv4olklenjcg&amp;output=jpg';}" class="h-9 md:h-11 w-auto max-w-[150px] md:max-w-[200px] object-contain block">
+                </div>
+
+                <!-- Kolom Pencarian Nama Artikel & Filter Kalender Tanggal -->
+                <div class="flex-1 max-w-xl mx-auto flex items-center gap-1.5 md:gap-2">
+                    <div class="flex-1 relative">
+                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs md:text-sm pointer-events-none"></i>
+                        <input type="text" id="search-article-input" value="" oninput="window.handleSearch(this.value)" placeholder="Cari nama artikel..." class="w-full pl-9 pr-8 py-2 md:py-2.5 text-xs md:text-sm font-semibold bg-slate-50 border border-slate-200 rounded-full outline-none focus:border-blue-500 focus:bg-white transition">
+                        <button id="clear-search-btn" onclick="window.clearSearch()" type="button" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    </div>
+
+                    <!-- Pemilih Kalender Tanggal Berita (Hanya Ikon Kalender, Preview Muncul Setelah Tanggal Dipilih) -->
+                    <div class="relative flex items-center shrink-0">
+                        <div id="date-filter-pill" class="relative flex items-center justify-center bg-slate-50 hover:bg-blue-50 border border-slate-200 text-slate-600 rounded-full w-9 h-9 md:w-10 md:h-10 transition">
+                            <i class="far fa-calendar-alt text-blue-600 text-sm pointer-events-none"></i>
+                            <span id="date-preview-text" class="hidden"></span>
+                            <input type="date" id="filter-date-input" value="" onclick="try { if(this.showPicker) this.showPicker(); } catch(e) {}" onchange="window.handleDateFilter(this.value)" title="Pilih tanggal berita" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-0">
+                            <button id="clear-date-btn" onclick="event.stopPropagation(); window.clearDateFilter()" type="button" title="Hapus Filter Tanggal" class="hidden">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tombol Login Kanan Atas -->
+                <button onclick="app.navigate('admin')" title="Panel Admin" class="w-9 h-9 md:w-10 md:h-10 shrink-0 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition">
+                    <i class="fas fa-lock"></i>
+                </button>
+            </header>
+        
+                <div class="flex w-full min-h-[calc(100vh-64px)]">
+                    
+            <!-- Sembunyi di Mobile, Sidebar di Desktop -->
+            <nav class="hidden md:flex flex-col w-64 fixed left-0 top-16 h-[calc(100vh-64px)] bg-white border-r border-slate-100 p-6 gap-2 z-30">
+                <p class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Menu Navigasi</p>
+                <button onclick="app.navigate('home')" class="flex items-center gap-4 p-4 rounded-2xl transition font-bold text-slate-600 hover:bg-slate-50"><i class="fas fa-home text-lg w-5"></i> Beranda</button>
+                <button onclick="app.navigate('trending')" class="flex items-center gap-4 p-4 rounded-2xl transition font-bold text-slate-600 hover:bg-slate-50"><i class="fas fa-fire text-lg w-5 text-orange-500"></i> Trending</button>
+                <button onclick="app.navigate('topics')" class="flex items-center gap-4 p-4 rounded-2xl transition font-bold text-slate-600 hover:bg-slate-50"><i class="fas fa-layer-group text-lg w-5"></i> Topik</button>
+                <button onclick="app.navigate('submit')" class="flex items-center gap-4 p-4 rounded-2xl transition font-bold bg-slate-900 text-white shadow-md"><i class="fas fa-pen-nib text-lg w-5"></i> Tulis Artikel</button>
+            </nav>
+            <!-- Navigasi Bawah di Mobile -->
+            <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center h-[75px] z-50 pb-safe shadow-[0_-10px_20px_rgba(0,0,0,0.05)] rounded-t-3xl">
+                <button onclick="app.navigate('home')" class="flex flex-col items-center justify-center w-full space-y-1 transition text-slate-400"><i class="fas fa-home text-xl"></i><span class="text-[10px] font-bold">Beranda</span></button>
+                <button onclick="app.navigate('trending')" class="flex flex-col items-center justify-center w-full space-y-1 transition text-slate-400"><i class="fas fa-fire text-xl"></i><span class="text-[10px] font-bold">Trending</span></button>
+                <button onclick="app.navigate('topics')" class="flex flex-col items-center justify-center w-full space-y-1 transition text-slate-400"><i class="fas fa-layer-group text-xl"></i><span class="text-[10px] font-bold">Topik</span></button>
+                <button onclick="app.navigate('submit')" class="flex flex-col items-center justify-center w-full space-y-1 transition text-slate-900"><i class="fas fa-pen-nib text-xl"></i><span class="text-[10px] font-bold">Tulis Artikel</span></button>
+            </nav>
+        
+                    <main id="main-content" class="flex-1 md:ml-64 pb-24 md:pb-10 relative">
+                    <div class="max-w-2xl mx-auto w-full p-4 md:p-8 animate-fade">
+                        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+                            <h2 class="text-2xl font-extrabold text-slate-900 mb-6 flex items-center gap-3"><i class="fas fa-pen-nib text-blue-600"></i> Kirim Artikel</h2>
+                            <form id="public-form" onsubmit="window.submitPublicForm(event)" class="space-y-5">
+                                <input type="text" id="f_title" required="" placeholder="Judul Berita" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-bold outline-none focus:border-blue-500">
+                                <select id="f_topic" required="" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-bold outline-none focus:border-blue-500">
+                                    <option value="">Pilih Kategori...</option>
+                                    <option value="dcdd537e-d286-4232-abbe-f012f3a7db5a">Lingkungan</option>
+                                </select>
+                                
+                                <div class="border border-slate-200 rounded-xl bg-slate-50 p-4">
+                                    <label class="block text-xs font-bold text-slate-500 mb-2">Pilih File Gambar</label>
+                                    <input type="file" id="f_image" accept="image/*" required="" onchange="previewImageUpload(event, 'preview_f')" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white cursor-pointer">
+                                </div>
+                                <div id="preview_f" class="hidden w-full h-40 bg-cover bg-center rounded-xl border border-slate-200"></div>
+
+                                <!-- Rich Text Editor Isi Berita Publik -->
+                                <div>
+                                    <label class="block text-xs font-extrabold text-slate-500 mb-1.5">Isi Berita Lengkap (Bisa Tebal, Miring, Garis Bawah &amp; Rata Kiri/Tengah/Kanan)</label>
+                                    
+                <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/15 transition">
+                    <!-- Toolbar Format Teks & Perataan Paragraf -->
+                    <div class="flex flex-wrap items-center gap-1 p-2 bg-slate-100/90 border-b border-slate-200 text-slate-700 select-none">
+                        <button type="button" onmousedown="event.preventDefault()" onclick="window.formatEditorText('f_content', 'bold')" title="Tebal (Bold)" class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs font-extrabold transition">
+                            <i class="fas fa-bold"></i>
+                        </button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="window.formatEditorText('f_content', 'italic')" title="Miring (Italic)" class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-italic"></i>
+                        </button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="window.formatEditorText('f_content', 'underline')" title="Garis Bawah (Underline)" class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-underline"></i>
+                        </button>
+
+                        <span class="w-px h-5 bg-slate-300 mx-1"></span>
+
+                        <button type="button" onmousedown="event.preventDefault()" onclick="window.formatEditorText('f_content', 'justifyLeft')" title="Rata Kiri" class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-align-left"></i>
+                        </button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="window.formatEditorText('f_content', 'justifyCenter')" title="Rata Tengah" class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-align-center"></i>
+                        </button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="window.formatEditorText('f_content', 'justifyRight')" title="Rata Kanan" class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-align-right"></i>
+                        </button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="window.formatEditorText('f_content', 'justifyFull')" title="Rata Kanan-Kiri (Justify)" class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-align-justify"></i>
+                        </button>
+
+                        <span class="ml-auto text-[10px] font-bold text-slate-400 pr-2 hidden sm:inline">
+                            Format Teks Berita
+                        </span>
+                    </div>
+
+                    <!-- Area Ketik Berita -->
+                    <div id="f_content" contenteditable="true" data-placeholder="Tulis isi berita lengkap di sini..." class="rich-editor w-full p-4 min-h-[200px] max-h-[380px] overflow-y-auto text-sm md:text-base leading-relaxed outline-none"><br></div>
+                </div>
+            
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <input type="text" id="f_author" required="" placeholder="Nama Penulis (Wajib)" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-bold outline-none focus:border-blue-500">
+                                    <input type="text" id="f_social" placeholder="Link / Username Sosmed (Opsional)" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-bold outline-none focus:border-blue-500">
+                                </div>
+                                <button type="submit" id="btn_f" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-600 transition">Kirim Pengajuan</button>
+                            </form>
+                        </div>
+                    </div></main>
+                </div>
+            </div>
     <!-- Container Modal Pop-up Berita & Share WhatsApp -->
     <div id="modal-container" class="fixed inset-0 z-[90] hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto"></div>
     <!-- Container Notifikasi Melayang -->
@@ -126,13 +275,155 @@
         // Data Cadangan Jika Mode Preview
         let mockTopics = [{ id: '1', name: 'Teknologi' }, { id: '2', name: 'Nasional' }];
         let mockArticles = [
-            { id: '101', title: 'Perkembangan AI 2026 di Indonesia', content: 'Teknologi kecerdasan buatan semakin maju dan membantu berbagai sektor industri maupun pendidikan masyarakat luas di tahun 2026.', image_url: 'https://placehold.co/800x400/2563eb/white?text=Teknologi', author_name: 'Zeniopost ||| https://instagram.com/zeniopost', topic_id: '1', status: 'approved', is_official: true, views: 142, created_at: new Date().toISOString() },
-            { id: '102', title: 'Gotong Royong Warga Bersihkan Lingkungan', content: 'Warga bersama pemuda setempat mengadakan kegiatan bersih-bersih lingkungan sekolah dan fasilitas umum agar tetap nyaman dan sehat.', image_url: 'https://placehold.co/800x400/10b981/white?text=Berita+Warga', author_name: 'Budi Santoso ||| @budisantoso_id', topic_id: '2', status: 'approved', is_official: false, views: 98, created_at: new Date(Date.now() - 3600000).toISOString() }
+            { id: '101', title: 'Perkembangan AI 2026 di Indonesia', content: 'Teknologi <b>kecerdasan buatan</b> semakin maju dan membantu berbagai sektor industri maupun pendidikan masyarakat luas di tahun 2026.', image_url: 'https://placehold.co/800x400/2563eb/white?text=Teknologi', author_name: 'Zeniopost ||| https://instagram.com/zeniopost', topic_id: '1', status: 'approved', is_official: true, views: 142, created_at: new Date().toISOString() },
+            { id: '102', title: 'Gotong Royong Warga Bersihkan Lingkungan', content: 'Warga bersama pemuda setempat mengadakan kegiatan <i>bersih-bersih lingkungan</i> sekolah dan fasilitas umum agar tetap nyaman dan sehat.', image_url: 'https://placehold.co/800x400/10b981/white?text=Berita+Warga', author_name: 'Budi Santoso ||| @budisantoso_id', topic_id: '2', status: 'approved', is_official: false, views: 98, created_at: new Date(Date.now() - 3600000).toISOString() }
         ];
         let mockComments = [
             { id: 'c1', article_id: '101', author_name: 'Rizky Pratama', is_anonymous: false, content: 'Informasi yang sangat bermanfaat, semoga teknologi AI makin merata di daerah!', likes: 5, parent_id: null, created_at: new Date(Date.now() - 1800000).toISOString() },
             { id: 'c2', article_id: '101', author_name: 'Anonim', is_anonymous: true, content: 'Setuju banget, sangat membantu pekerjaan sehari-hari.', likes: 2, parent_id: 'c1', created_at: new Date(Date.now() - 900000).toISOString() }
         ];
+
+        // =====================================================================
+        // HELPER RICH TEXT EDITOR (BOLD, ITALIC, UNDERLINE & RATA KIRI/TENGAH/KANAN)
+        // =====================================================================
+        const stripHtml = (rawHtml) => {
+            if (!rawHtml) return '';
+            const withSpaces = String(rawHtml)
+                .replace(/<br\s*\/?>/gi, ' ')
+                .replace(/<\/(p|div|li|h[1-6])>/gi, ' ');
+            const temp = document.createElement('div');
+            temp.innerHTML = withSpaces;
+            return (temp.textContent || temp.innerText || '').replace(/\s+/g, ' ').trim();
+        };
+
+        const sanitizeAndFormatArticleHtml = (rawContent) => {
+            if (!rawContent) return '';
+            const str = String(rawContent);
+            const hasHtmlTag = /<\/?[a-z][\s\S]*>/i.test(str);
+
+            if (!hasHtmlTag) {
+                const escaped = str
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+                return `<div class="whitespace-pre-wrap">${escaped}</div>`;
+            }
+
+            // Bersihkan tag berbahaya (script, iframe, event handler on*) namun pertahankan format teks & perataan
+            const temp = document.createElement('div');
+            temp.innerHTML = str;
+            temp.querySelectorAll('script, iframe, object, embed, style, link, meta').forEach(el => el.remove());
+            temp.querySelectorAll('*').forEach(el => {
+                Array.from(el.attributes).forEach(attr => {
+                    const name = attr.name.toLowerCase();
+                    if (name.startsWith('on') || (name === 'href' && attr.value.trim().toLowerCase().startsWith('javascript:'))) {
+                        el.removeAttribute(attr.name);
+                    }
+                });
+            });
+            return `<div class="article-rich-content">${temp.innerHTML}</div>`;
+        };
+
+        const prepareInitialEditorHtml = (rawContent) => {
+            if (!rawContent) return '';
+            const str = String(rawContent);
+            if (/<\/?[a-z][\s\S]*>/i.test(str)) {
+                return str;
+            }
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\n/g, '<br>');
+        };
+
+        const renderRichTextEditor = (editorId, placeholder = 'Tulis isi berita lengkap di sini...', initialContent = '', minHeightClass = 'min-h-[180px]') => {
+            const safeInitial = prepareInitialEditorHtml(initialContent);
+            return `
+                <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/15 transition">
+                    <!-- Toolbar Format Teks & Perataan Paragraf -->
+                    <div class="flex flex-wrap items-center gap-1 p-2 bg-slate-100/90 border-b border-slate-200 text-slate-700 select-none">
+                        <button type="button"
+                                onmousedown="event.preventDefault()"
+                                onclick="window.formatEditorText('${editorId}', 'bold')"
+                                title="Tebal (Bold)"
+                                class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs font-extrabold transition">
+                            <i class="fas fa-bold"></i>
+                        </button>
+                        <button type="button"
+                                onmousedown="event.preventDefault()"
+                                onclick="window.formatEditorText('${editorId}', 'italic')"
+                                title="Miring (Italic)"
+                                class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-italic"></i>
+                        </button>
+                        <button type="button"
+                                onmousedown="event.preventDefault()"
+                                onclick="window.formatEditorText('${editorId}', 'underline')"
+                                title="Garis Bawah (Underline)"
+                                class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-underline"></i>
+                        </button>
+
+                        <span class="w-px h-5 bg-slate-300 mx-1"></span>
+
+                        <button type="button"
+                                onmousedown="event.preventDefault()"
+                                onclick="window.formatEditorText('${editorId}', 'justifyLeft')"
+                                title="Rata Kiri"
+                                class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-align-left"></i>
+                        </button>
+                        <button type="button"
+                                onmousedown="event.preventDefault()"
+                                onclick="window.formatEditorText('${editorId}', 'justifyCenter')"
+                                title="Rata Tengah"
+                                class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-align-center"></i>
+                        </button>
+                        <button type="button"
+                                onmousedown="event.preventDefault()"
+                                onclick="window.formatEditorText('${editorId}', 'justifyRight')"
+                                title="Rata Kanan"
+                                class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-align-right"></i>
+                        </button>
+                        <button type="button"
+                                onmousedown="event.preventDefault()"
+                                onclick="window.formatEditorText('${editorId}', 'justifyFull')"
+                                title="Rata Kanan-Kiri (Justify)"
+                                class="w-8 h-8 rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-sm flex items-center justify-center text-xs transition">
+                            <i class="fas fa-align-justify"></i>
+                        </button>
+
+                        <span class="ml-auto text-[10px] font-bold text-slate-400 pr-2 hidden sm:inline">
+                            Format Teks Berita
+                        </span>
+                    </div>
+
+                    <!-- Area Ketik Berita -->
+                    <div id="${editorId}"
+                         contenteditable="true"
+                         data-placeholder="${placeholder.replace(/"/g, '&quot;')}"
+                         class="rich-editor w-full p-4 ${minHeightClass} max-h-[380px] overflow-y-auto text-sm md:text-base leading-relaxed outline-none">${safeInitial}</div>
+                </div>
+            `;
+        };
+
+        window.formatEditorText = (editorId, command) => {
+            const editor = document.getElementById(editorId);
+            if (!editor) return;
+            editor.focus();
+            document.execCommand(command, false, null);
+        };
+
+        const getRichEditorContent = (editorId) => {
+            const editor = document.getElementById(editorId);
+            if (!editor) return { html: '', text: '' };
+            const html = editor.innerHTML.trim();
+            const text = stripHtml(html);
+            return { html, text };
+        };
 
         // Fungsi mengambil jumlah pembaca artikel (Hanya ditampilkan untuk Admin & dasar urutan Trending)
         const getArticleViews = (article) => {
@@ -251,7 +542,6 @@
             const likeCount = getCommentLikes(c);
             const liked = isCommentLiked(c.id);
 
-            // Cari balasan yang merujuk ke komentar ini (diurutkan dari terlama ke terbaru agar alur percakapan rapi)
             const replies = allComments
                 .filter(r => String(r.parsedParentId) === String(c.id))
                 .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
@@ -381,7 +671,6 @@
         const renderCommentsSection = (articleId, prefix = 'pop') => {
             const allList = getArticleComments(articleId);
             const allIds = new Set(allList.map(c => String(c.id)));
-            // Komentar utama adalah komentar yang tidak memiliki parent_id (atau parent-nya sudah tidak ada)
             const rootComments = allList.filter(c => !c.parsedParentId || !allIds.has(String(c.parsedParentId)));
 
             return `
@@ -533,7 +822,7 @@
             const ogDesc = document.getElementById('og-desc');
             const ogImg = document.getElementById('og-image');
             if (ogTitle) ogTitle.setAttribute('content', article.title);
-            if (ogDesc) ogDesc.setAttribute('content', (article.content || '').substring(0, 150));
+            if (ogDesc) ogDesc.setAttribute('content', stripHtml(article.content || '').substring(0, 150));
             if (ogImg && article.image_url) ogImg.setAttribute('content', article.image_url);
         };
 
@@ -754,7 +1043,6 @@
                 } else if (supabase) {
                     const { data, error } = await supabase.from('comments').insert([newCommentObj]).select();
                     if (error) {
-                        // Tetap tampilkan secara langsung di sesi aktif jika tabel comments belum dibuat di SQL Editor
                         const fallbackSaved = { ...newCommentObj, id: 'local_' + Date.now() };
                         appState.comments.unshift(fallbackSaved);
                     } else if (data && data.length > 0) {
@@ -840,7 +1128,6 @@
 
             const isAnon = mode === 'anon';
             const finalAuthor = isAnon ? 'Anonim' : rawName;
-            // Sematkan tag [REPLY:id:nama] agar relasi balasan selalu tersimpan utuh di database
             const encodedContent = `[REPLY:${parentCommentId}:${replyToName}] ${rawText}`;
 
             if (btn) {
@@ -927,7 +1214,6 @@
         window.deleteComment = async (commentId, articleId = null) => {
             try {
                 const targetIdStr = String(commentId);
-                // Kumpulkan juga semua ID balasan yang merujuk pada komentar ini
                 const idsToDelete = new Set([targetIdStr]);
                 let added = true;
                 while (added) {
@@ -1052,8 +1338,8 @@
                             ` : ''}
                         </div>
 
-                        <!-- Isi Lengkap Berita -->
-                        <div class="text-slate-700 text-base leading-relaxed whitespace-pre-wrap pt-2">${a.content}</div>
+                        <!-- Isi Lengkap Berita (Mendukung Bold, Italic, Underline & Rata Kiri/Tengah/Kanan) -->
+                        <div class="text-slate-700 text-base leading-relaxed pt-2">${sanitizeAndFormatArticleHtml(a.content)}</div>
 
                         <!-- Tombol Opsi Buka Layar Penuh & Bagikan di Bawah Teks Berita -->
                         <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
@@ -1112,7 +1398,6 @@
             const shareUrl = getShareUrl(a.id);
             const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
 
-            // Gunakan menu Share bawaan khusus di HP agar bisa langsung pilih aplikasi WhatsApp
             if (isMobileDevice && navigator.share) {
                 try {
                     await navigator.share({
@@ -1125,7 +1410,6 @@
                 }
             }
 
-            // Di Laptop/PC atau jika menu Share ditutup, langsung salin link berita agar siap di-paste di WhatsApp
             copyToClipboard(shareUrl);
         };
 
@@ -1241,7 +1525,7 @@
                         <!-- Isi Artikel Lengkap -->
                         <div class="p-5 rounded-2xl bg-white border border-slate-200">
                             <div class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Isi Lengkap Berita</div>
-                            <div class="text-slate-800 text-base leading-relaxed whitespace-pre-wrap">${a.content}</div>
+                            <div class="text-slate-800 text-base leading-relaxed">${sanitizeAndFormatArticleHtml(a.content)}</div>
                         </div>
 
                         <!-- Kelola Komentar Artikel Ini di Modal Admin -->
@@ -1269,7 +1553,7 @@
                     <form id="admin-tab-edit" onsubmit="window.saveAdminEdit(event, '${a.id}')" class="${initialTab === 'edit' ? 'block' : 'hidden'} overflow-y-auto p-6 space-y-4 flex-1">
                         <div class="bg-blue-50 border border-blue-100 p-3.5 rounded-2xl text-xs font-bold text-blue-800 flex items-center gap-2.5">
                             <i class="fas fa-lightbulb text-blue-600 text-base"></i>
-                            <span>Anda dapat memperbaiki judul, mengedit isi teks berita, mengganti foto/gambar, atau menyesuaikan informasi penulis & sosial medianya sebelum ditayangkan.</span>
+                            <span>Anda dapat memperbaiki judul, memformat isi teks berita (Tebal, Miring, Garis Bawah, Rata Kiri/Tengah/Kanan), mengganti gambar, atau menyesuaikan informasi penulis.</span>
                         </div>
 
                         <!-- Edit Judul & Kategori -->
@@ -1315,10 +1599,10 @@
                             </div>
                         </div>
 
-                        <!-- Edit Isi Berita Lengkap -->
+                        <!-- Edit Isi Berita Lengkap dengan Rich Text Toolbar -->
                         <div>
                             <label class="block text-xs font-extrabold text-slate-600 mb-1.5">Isi Teks Berita Lengkap</label>
-                            <textarea id="edit_content" required rows="8" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-medium text-sm leading-relaxed outline-none focus:border-blue-500">${a.content || ''}</textarea>
+                            ${renderRichTextEditor('edit_content', 'Tulis isi berita lengkap...', a.content || '', 'min-h-[220px]')}
                         </div>
 
                         <!-- Tombol Simpan Edit / Simpan & Tayangkan -->
@@ -1387,6 +1671,12 @@
             const target = appState.articles.find(x => String(x.id) === String(articleId));
             if (!target) return;
 
+            const editorData = getRichEditorContent('edit_content');
+            if (!editorData.text) {
+                showToast('Isi teks berita tidak boleh kosong.', 'error');
+                return;
+            }
+
             const btnSave = document.getElementById('btn_save_edit');
             const btnAcc = document.getElementById('btn_save_approve');
             if (btnSave) { btnSave.innerHTML = 'Menyimpan...'; btnSave.disabled = true; }
@@ -1401,7 +1691,7 @@
 
                 const newTitle = document.getElementById('edit_title').value.trim();
                 const newTopic = document.getElementById('edit_topic').value;
-                const newContent = document.getElementById('edit_content').value;
+                const newContent = editorData.html;
                 const rawName = (document.getElementById('edit_author').value || 'Anonim').trim();
                 const rawSocial = (document.getElementById('edit_social').value || '').trim();
                 const combinedAuthor = rawSocial ? `${rawName} ||| ${rawSocial}` : rawName;
@@ -1690,6 +1980,7 @@
             const topicObj = appState.topics.find(t => String(t.id) === String(a.topic_id));
             const topicName = topicObj ? topicObj.name : 'Berita';
             const commentCount = getArticleComments(a.id).length;
+            const plainSnippet = stripHtml(a.content) || 'Klik untuk membaca berita selengkapnya...';
 
             return `
                 <article onclick="window.openArticlePopup('${a.id}')" class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 hover-scale cursor-pointer group flex flex-col justify-between">
@@ -1713,7 +2004,7 @@
                                 ${a.title}
                             </h3>
                             <p class="text-sm text-slate-600 line-clamp-3 leading-relaxed">
-                                ${a.content || 'Klik untuk membaca berita selengkapnya...'}
+                                ${plainSnippet}
                             </p>
                         </div>
                     </div>
@@ -1862,38 +2153,17 @@
                                     </a>
                                 ` : ''}
                             </div>
-                            <div class="text-lg text-slate-700 leading-relaxed whitespace-pre-wrap mb-10">${a.content}</div>
+                            <div class="text-lg text-slate-700 leading-relaxed mb-10">${sanitizeAndFormatArticleHtml(a.content)}</div>
 
                             <!-- Bagian Komentar di Halaman Baca Penuh -->
                             ${renderCommentsSection(a.id, 'page')}
                         </div>
                     </div>`;
             }
-            // --- HALAMAN BERANDA (HOME) ---
+            // --- HALAMAN BERANDA (HOME - MURNI BERITA TERBARU TANPA SEKSI TRENDING) ---
             else if (appState.view === 'home') {
                 const allApproved = appState.articles.filter(a => a.status === 'approved');
                 const arts = filterBySearch(allApproved);
-                const topTrending = getTrendingArticles(allApproved).slice(0, 3);
-
-                let trendingSection = '';
-                if (!searchActive && topTrending.length > 0) {
-                    trendingSection = `
-                        <div class="mb-10">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center"><i class="fas fa-fire"></i></span>
-                                    <h2 class="text-xl md:text-2xl font-extrabold text-slate-800">Sedang Trending</h2>
-                                </div>
-                                <button onclick="app.navigate('trending')" class="text-xs font-extrabold text-orange-600 hover:underline flex items-center gap-1">
-                                    Lihat Semua <i class="fas fa-arrow-right text-[10px]"></i>
-                                </button>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                ${topTrending.map((a, idx) => renderArticleCard(a, idx + 1)).join('')}
-                            </div>
-                        </div>
-                    `;
-                }
 
                 let list = arts.length === 0 
                     ? `<div class="text-center p-12 bg-white rounded-3xl border border-slate-100 text-slate-400 font-bold col-span-full">${searchActive ? 'Tidak ada berita yang cocok dengan filter pencarian / tanggal kalender yang dipilih.' : 'Belum ada berita yang ditayangkan.'}</div>` 
@@ -1902,7 +2172,6 @@
                 content = `
                     <div class="max-w-6xl mx-auto w-full p-4 md:p-8 animate-fade">
                         ${renderActiveFilterBanner()}
-                        ${trendingSection}
                         <div class="flex items-center justify-between mb-6">
                             <h2 class="text-xl md:text-2xl font-extrabold text-slate-800">
                                 ${searchActive ? 'Hasil Filter Berita' : 'Berita Terbaru'}
@@ -1912,7 +2181,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">${list}</div>
                     </div>`;
             }
-            // --- HALAMAN TRENDING ---
+            // --- HALAMAN TRENDING (KHUSUS DI MENU / IKON TRENDING) ---
             else if (appState.view === 'trending') {
                 const allApproved = appState.articles.filter(a => a.status === 'approved');
                 const sortedTrending = filterBySearch(getTrendingArticles(allApproved));
@@ -1984,7 +2253,11 @@
                                 </div>
                                 <div id="preview_f" class="hidden w-full h-40 bg-cover bg-center rounded-xl border border-slate-200"></div>
 
-                                <textarea id="f_content" required rows="6" placeholder="Isi Berita Lengkap..." class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-medium outline-none focus:border-blue-500"></textarea>
+                                <!-- Rich Text Editor Isi Berita Publik -->
+                                <div>
+                                    <label class="block text-xs font-extrabold text-slate-500 mb-1.5">Isi Berita Lengkap (Bisa Tebal, Miring, Garis Bawah & Rata Kiri/Tengah/Kanan)</label>
+                                    ${renderRichTextEditor('f_content', 'Tulis isi berita lengkap di sini...', '', 'min-h-[200px]')}
+                                </div>
                                 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <input type="text" id="f_author" required placeholder="Nama Penulis (Wajib)" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-bold outline-none focus:border-blue-500">
@@ -2047,7 +2320,7 @@
                                                                 <span class="text-[11px] text-slate-400 font-semibold"><i class="far fa-clock mr-1"></i>${formatWaktu(x.created_at)}</span>
                                                             </div>
                                                             <h4 onclick="window.openAdminReviewModal('${x.id}', 'preview')" class="font-extrabold text-base text-slate-900 hover:text-blue-600 cursor-pointer line-clamp-1">${x.title}</h4>
-                                                            <p class="text-xs text-slate-600 mt-1 line-clamp-2 leading-relaxed">${x.content}</p>
+                                                            <p class="text-xs text-slate-600 mt-1 line-clamp-2 leading-relaxed">${stripHtml(x.content)}</p>
                                                             
                                                             <!-- Info Penulis & Link Sosial Media yang Bisa Dicek Langsung -->
                                                             <div class="flex flex-wrap items-center gap-2 mt-2.5 pt-2 border-t border-orange-100/80 text-xs">
@@ -2270,7 +2543,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- FORM TULIS RESMI -->
+                                    <!-- FORM TULIS RESMI DENGAN RICH TEXT EDITOR -->
                                     <div class="bg-blue-50 border border-blue-100 p-6 rounded-3xl">
                                         <h3 class="font-extrabold text-blue-900 mb-4"><i class="fas fa-pen-nib"></i> Terbitkan Resmi</h3>
                                         <form onsubmit="window.submitAdminForm(event)" class="space-y-3">
@@ -2279,7 +2552,9 @@
                                                 <option value="">Kategori...</option>${appState.topics.map(t => `<option value="${t.id}">${t.name}</option>`).join('')}
                                             </select>
                                             <input type="file" id="a_image" accept="image/*" required class="w-full text-xs file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-600 file:text-white bg-white p-2 rounded-xl">
-                                            <textarea id="a_content" required rows="4" placeholder="Isi Berita..." class="w-full p-3 bg-white rounded-xl text-sm border border-blue-100 outline-none"></textarea>
+                                            <div>
+                                                ${renderRichTextEditor('a_content', 'Tulis isi berita resmi...', '', 'min-h-[140px]')}
+                                            </div>
                                             <input type="text" id="a_social" placeholder="Sosmed (Opsional, misal @zeniopost)" class="w-full p-3 bg-white rounded-xl text-sm font-bold border border-blue-100 outline-none">
                                             <button type="submit" id="btn_a" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow-sm text-sm"><i class="fas fa-paper-plane"></i> Terbitkan</button>
                                         </form>
@@ -2328,6 +2603,12 @@
 
         window.submitPublicForm = async (e) => {
             e.preventDefault();
+            const editorData = getRichEditorContent('f_content');
+            if (!editorData.text) {
+                showToast("Isi berita tidak boleh kosong.", "error");
+                return;
+            }
+
             const btn = document.getElementById('btn_f'); btn.innerHTML = "Mengunggah..."; btn.disabled = true;
             try {
                 const img = await uploadFileKeSupabase('f_image');
@@ -2339,7 +2620,7 @@
                     title: document.getElementById('f_title').value,
                     topic_id: document.getElementById('f_topic').value,
                     image_url: img,
-                    content: document.getElementById('f_content').value,
+                    content: editorData.html,
                     author_name: combinedAuthor,
                     status: 'pending',
                     is_official: false,
@@ -2358,6 +2639,12 @@
 
         window.submitAdminForm = async (e) => {
             e.preventDefault();
+            const editorData = getRichEditorContent('a_content');
+            if (!editorData.text) {
+                showToast("Isi berita tidak boleh kosong.", "error");
+                return;
+            }
+
             const btn = document.getElementById('btn_a'); btn.innerHTML = "Menerbitkan..."; btn.disabled = true;
             try {
                 const img = await uploadFileKeSupabase('a_image');
@@ -2368,7 +2655,7 @@
                     title: document.getElementById('a_title').value,
                     topic_id: document.getElementById('a_topic').value,
                     image_url: img,
-                    content: document.getElementById('a_content').value,
+                    content: editorData.html,
                     author_name: combinedAuthor,
                     status: 'approved',
                     is_official: true,
@@ -2433,5 +2720,5 @@
 
         init();
     </script>
-</body>
-</html>
+
+</body></html>
