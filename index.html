@@ -14,16 +14,16 @@
     <meta property="og:url" content="https://zeniopost.vercel.app/" id="og-url">
     <meta property="og:title" content="Zeniopost - Portal Berita Digital" id="og-title">
     <meta property="og:description" content="Platform berita digital terpercaya dari masyarakat untuk masyarakat." id="og-desc">
-    <meta property="og:image" content="https://res.cloudinary.com/dtz0urit6/image/upload/w_1200,h_630,c_pad,b_white,f_jpg,q_auto:good/cloudinary-tools-uploads/zcquxuy5sud0gbzvzvxt.jpg" id="og-image">
-    <meta property="og:image:secure_url" content="https://res.cloudinary.com/dtz0urit6/image/upload/w_1200,h_630,c_pad,b_white,f_jpg,q_auto:good/cloudinary-tools-uploads/zcquxuy5sud0gbzvzvxt.jpg" id="og-image-secure">
+    <meta property="og:image" content="https://res.cloudinary.com/dtz0urit6/image/upload/w_1200,h_630,c_pad,b_white,f_jpg,q_auto:good/cloudinary-tools-uploads/dihjwoqgvxak1am7vhur.jpg" id="og-image">
+    <meta property="og:image:secure_url" content="https://res.cloudinary.com/dtz0urit6/image/upload/w_1200,h_630,c_pad,b_white,f_jpg,q_auto:good/cloudinary-tools-uploads/dihjwoqgvxak1am7vhur.jpg" id="og-image-secure">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
 
     <!-- Favicon & Preload Logo Utama -->
-    <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/zcquxuy5sud0gbzvzvxt">
-    <link rel="preload" as="image" href="https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/zcquxuy5sud0gbzvzvxt">
+    <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/dihjwoqgvxak1am7vhur">
+    <link rel="preload" as="image" href="https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/dihjwoqgvxak1am7vhur">
 
     <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -171,7 +171,7 @@
         const IS_PREVIEW = false; 
         const DB_URL = "https://zwezerwhvqsauohbfxkq.supabase.co"; 
         const DB_ANON_KEY = "sb_publishable_6wEL_RA1TIkENs1ZAyqtCg_1L5GjjjW"; 
-        const LOGO_URL = "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/zcquxuy5sud0gbzvzvxt";
+        const LOGO_URL = "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/dihjwoqgvxak1am7vhur";
         const LOGO_FALLBACK_URL = "https://wsrv.nl/?url=" + encodeURIComponent(LOGO_URL) + "&output=jpg";
         const PAGE_SIZE = 6; // Jumlah berita per tahap untuk tombol "Muat Lebih Banyak"
 
@@ -246,8 +246,10 @@
                 id: 'pr1',
                 user_id: 'u1',
                 email: 'budi@zeniopost.com',
+                active_email: 'budisantoso.aktif@gmail.com',
+                phone_number: '081234567890',
                 requested_password: 'sandibaru2026',
-                reason: 'Lupa kata sandi lama setelah ganti perangkat HP.',
+                reason: '[GMAIL:budisantoso.aktif@gmail.com][TELP:081234567890][SANDI_BARU:sandibaru2026] Lupa kata sandi lama setelah ganti perangkat HP.',
                 status: 'pending',
                 created_at: new Date(Date.now() - 1800000).toISOString()
             }
@@ -771,11 +773,44 @@
             renderApp();
         };
 
-        // Pendaftaran Akun Baru dengan Email Otomatis @zeniopost.com & Username Unik Case-Insensitive
+        // Preview & Batal (X) Foto Profil pada Form Pendaftaran
+        window.previewRegisterAvatar = (event) => {
+            const file = event.target.files?.[0];
+            const wrap = document.getElementById('reg_avatar_preview_wrap');
+            const img = document.getElementById('reg_avatar_preview_img');
+            if (!file) {
+                if (wrap) wrap.classList.add('hidden');
+                return;
+            }
+            validateProfileImageDimensions(file)
+                .then(() => {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        if (img) img.src = e.target.result;
+                        if (wrap) wrap.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                })
+                .catch(err => {
+                    event.target.value = '';
+                    if (wrap) wrap.classList.add('hidden');
+                    showToast(err.message, 'error');
+                });
+        };
+
+        window.clearRegisterAvatar = () => {
+            const inp = document.getElementById('reg_avatar');
+            const wrap = document.getElementById('reg_avatar_preview_wrap');
+            const img = document.getElementById('reg_avatar_preview_img');
+            if (inp) inp.value = '';
+            if (img) img.src = '';
+            if (wrap) wrap.classList.add('hidden');
+        };
+
+        // Pendaftaran Akun Baru Tanpa Username Unik & Langsung Otomatis Login (Maks Sandi 15 Karakter)
         window.handleUserRegister = async (e) => {
             e.preventDefault();
             const fullName = (document.getElementById('reg_fullname')?.value || '').trim();
-            const rawUsername = (document.getElementById('reg_username')?.value || '').trim().replace(/\s+/g, '');
             const rawEmailPrefix = (document.getElementById('reg_email_prefix')?.value || '')
                 .trim()
                 .toLowerCase()
@@ -784,29 +819,20 @@
             const password = document.getElementById('reg_password')?.value || '';
             const btn = document.getElementById('btn_reg_submit');
 
-            if (!fullName || !rawUsername || !rawEmailPrefix || !password) {
+            if (!fullName || !rawEmailPrefix || !password) {
                 showToast('Harap lengkapi semua kolom pendaftaran.', 'error');
-                return;
-            }
-            if (rawUsername.length < 3) {
-                showToast('Username minimal 3 karakter.', 'error');
                 return;
             }
             if (password.length < 6) {
                 showToast('Kata sandi minimal 6 karakter.', 'error');
                 return;
             }
-
-            const finalEmail = `${rawEmailPrefix}@zeniopost.com`;
-
-            // Validasi Username Unik (Case-Insensitive)
-            const usernameExists = appState.zpUsers.some(
-                u => (u.username || '').toLowerCase() === rawUsername.toLowerCase()
-            );
-            if (usernameExists) {
-                showToast(`Username "${rawUsername}" sudah digunakan pengguna lain (tidak boleh sama walau beda huruf besar/kecil).`, 'error');
+            if (password.length > 15) {
+                showToast('Kata sandi maksimal 15 karakter.', 'error');
                 return;
             }
+
+            const finalEmail = `${rawEmailPrefix}@zeniopost.com`;
 
             const emailExists = appState.zpUsers.some(
                 u => (u.email || '').toLowerCase() === finalEmail.toLowerCase()
@@ -828,38 +854,41 @@
 
                 const newUserPayload = {
                     full_name: fullName,
-                    username: rawUsername,
+                    username: rawEmailPrefix,
                     email: finalEmail,
                     password_hash: password,
                     avatar_url: avatarUrl || '',
-                    status: 'pending',
+                    status: 'approved',
                     created_at: new Date().toISOString()
                 };
 
+                let createdUser = null;
                 if (IS_PREVIEW) {
                     newUserPayload.id = 'u_' + Date.now();
                     mockUsers.unshift(newUserPayload);
+                    createdUser = newUserPayload;
                 } else {
-                    const { error } = await dbClient.from('zp_users').insert([newUserPayload]);
+                    const { data, error } = await dbClient.from('zp_users').insert([newUserPayload]).select();
                     if (error) throw error;
+                    createdUser = data?.[0] || newUserPayload;
                 }
 
+                appState.currentUser = createdUser;
+                localStorage.setItem('zeniopost_current_user', JSON.stringify(createdUser));
                 await fetchData();
-                showToast(`Pendaftaran berhasil untuk <b>${finalEmail}</b>! Menunggu persetujuan Admin sebelum akun dapat digunakan.`, 'success');
-                appState.accountTab = 'login';
-                appState.showForgotForm = false;
+                showToast(`Pendaftaran berhasil! Selamat datang, <b>${fullName}</b>.`, 'success');
                 renderApp();
             } catch (err) {
                 showToast(err.message || 'Gagal mendaftarkan akun.', 'error');
-                if (btn) { btn.innerHTML = 'Daftar Akun Zeniopost'; btn.disabled = false; }
+                if (btn) { btn.innerHTML = 'Daftar & Masuk Sekarang'; btn.disabled = false; }
             }
         };
 
-        // Login Pengguna Menggunakan Email @zeniopost.com & Kata Sandi
+        // Login Pengguna Menggunakan Email @zeniopost.com & Kata Sandi (Maks 15 Karakter)
         window.handleUserLogin = async (e) => {
             e.preventDefault();
             let rawEmail = (document.getElementById('usr_login_email')?.value || '').trim().toLowerCase();
-            const password = document.getElementById('usr_login_pass')?.value || '';
+            const password = (document.getElementById('usr_login_pass')?.value || '').slice(0, 15);
 
             if (!rawEmail.includes('@')) {
                 rawEmail = `${rawEmail}@zeniopost.com`;
@@ -875,12 +904,8 @@
                 return;
             }
 
-            if (foundUser.status === 'pending') {
-                showToast('Akun Anda masih berstatus <b>Menunggu Persetujuan Admin</b>.', 'info');
-                return;
-            }
             if (foundUser.status === 'rejected') {
-                showToast('Maaf, pengajuan pendaftaran akun Anda telah ditolak oleh Admin.', 'error');
+                showToast('Maaf, akun Anda telah dinonaktifkan oleh Admin.', 'error');
                 return;
             }
 
@@ -899,10 +924,48 @@
             renderApp();
         };
 
-        // Unggah / Ganti Foto Profil dengan Validasi Maksimal 750 x 750 Piksel
-        window.handleUpdateAvatar = async (event) => {
+        // Pratinjau + Tombol X (Batal) Sebelum Simpan Foto Profil di Halaman Akun
+        window.previewProfileAvatarSelection = (event) => {
             const file = event.target.files?.[0];
-            if (!file || !appState.currentUser) return;
+            const box = document.getElementById('profile_pending_avatar_box');
+            const img = document.getElementById('profile_pending_avatar_img');
+            if (!file) {
+                if (box) box.classList.add('hidden');
+                return;
+            }
+            validateProfileImageDimensions(file)
+                .then(() => {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        if (img) img.src = e.target.result;
+                        if (box) box.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                })
+                .catch(err => {
+                    event.target.value = '';
+                    if (box) box.classList.add('hidden');
+                    showToast(err.message, 'error');
+                });
+        };
+
+        window.cancelProfileAvatarSelection = () => {
+            const inp = document.getElementById('profile_avatar_input');
+            const box = document.getElementById('profile_pending_avatar_box');
+            const img = document.getElementById('profile_pending_avatar_img');
+            if (inp) inp.value = '';
+            if (img) img.src = '';
+            if (box) box.classList.add('hidden');
+        };
+
+        // Unggah / Ganti Foto Profil dengan Validasi Maksimal 750 x 750 Piksel
+        window.handleUpdateAvatar = async () => {
+            const inputEl = document.getElementById('profile_avatar_input');
+            const file = inputEl?.files?.[0];
+            if (!file || !appState.currentUser) {
+                showToast('Pilih foto terlebih dahulu.', 'error');
+                return;
+            }
 
             try {
                 const dim = await validateProfileImageDimensions(file);
@@ -924,7 +987,7 @@
                 showToast('Foto profil berhasil diperbarui!', 'success');
                 renderApp();
             } catch (err) {
-                event.target.value = '';
+                if (inputEl) inputEl.value = '';
                 showToast(err.message || 'Gagal mengunggah foto profil.', 'error');
             }
         };
@@ -957,17 +1020,31 @@
         };
 
         // Pengajuan Lupa Kata Sandi Menyatu di Bagian Masuk Akun:
-        // Pengguna mengirimkan Email, Request Sandi Baru, beserta Alasannya.
+        // Wajib mengisi Email Google (Gmail) Aktif dan Nomor Telepon karena sandi baru akan dikirim ke Gmail (bukan ke Chat).
         window.handleRequestPasswordRecovery = async (e) => {
             e.preventDefault();
-            let rawEmail = (document.getElementById('rec_email')?.value || '').trim().toLowerCase();
+            let rawZpEmail = (document.getElementById('rec_zp_email')?.value || '').trim().toLowerCase();
+            const activeGmail = (document.getElementById('rec_gmail')?.value || '').trim().toLowerCase();
+            const phoneNum = (document.getElementById('rec_phone')?.value || '').trim();
             const reqNewPassword = (document.getElementById('rec_new_password')?.value || '').trim();
             const reason = (document.getElementById('rec_reason')?.value || '').trim();
 
-            if (!rawEmail.includes('@')) rawEmail = `${rawEmail}@zeniopost.com`;
+            if (!rawZpEmail) {
+                showToast('Harap isi akun Zeniopost yang ingin dipulihkan.', 'error');
+                return;
+            }
+            if (!rawZpEmail.includes('@')) rawZpEmail = `${rawZpEmail}@zeniopost.com`;
 
-            if (reqNewPassword.length < 6) {
-                showToast('Request kata sandi baru minimal 6 karakter.', 'error');
+            if (!activeGmail || !activeGmail.endsWith('@gmail.com')) {
+                showToast('Wajib mengisi alamat email Google aktif (@gmail.com) karena sandi baru akan dikirim ke Gmail Anda.', 'error');
+                return;
+            }
+            if (!phoneNum || phoneNum.replace(/[^0-9]/g, '').length < 8) {
+                showToast('Wajib mengisi nomor telepon aktif yang valid.', 'error');
+                return;
+            }
+            if (reqNewPassword.length < 6 || reqNewPassword.length > 15) {
+                showToast('Request kata sandi baru harus 6 hingga 15 karakter.', 'error');
                 return;
             }
             if (!reason) {
@@ -976,26 +1053,28 @@
             }
 
             await fetchData();
-            const targetUser = appState.zpUsers.find(u => (u.email || '').toLowerCase() === rawEmail);
+            const targetUser = appState.zpUsers.find(u => (u.email || '').toLowerCase() === rawZpEmail);
             if (!targetUser) {
-                showToast(`Email "${rawEmail}" tidak ditemukan dalam sistem Zeniopost.`, 'error');
+                showToast(`Akun "${rawZpEmail}" tidak ditemukan dalam sistem Zeniopost.`, 'error');
                 return;
             }
 
             const existingRequest = appState.passwordResets.find(
-                r => (r.email || '').toLowerCase() === rawEmail && r.status === 'pending'
+                r => (r.email || '').toLowerCase() === rawZpEmail && r.status === 'pending'
             );
             if (existingRequest) {
-                showToast(`Sudah ada pengajuan sandi baru untuk ${rawEmail} yang sedang menunggu persetujuan Admin.`, 'info');
+                showToast(`Sudah ada pengajuan sandi baru untuk ${rawZpEmail} yang sedang menunggu persetujuan Admin.`, 'info');
                 return;
             }
 
-            // Simpan informasi sandi baru yang diminta di kolom requested_password dan di dalam teks reason sebagai fallback aman
-            const encodedReason = `[SANDI_BARU:${reqNewPassword}] ${reason}`;
+            // Simpan metadata Gmail Aktif, Nomor Telepon, dan Request Sandi Baru
+            const encodedReason = `[GMAIL:${activeGmail}][TELP:${phoneNum}][SANDI_BARU:${reqNewPassword}] ${reason}`;
 
             const payload = {
                 user_id: targetUser.id,
-                email: rawEmail,
+                email: rawZpEmail,
+                active_email: activeGmail,
+                phone_number: phoneNum,
                 requested_password: reqNewPassword,
                 reason: encodedReason,
                 status: 'pending',
@@ -1009,10 +1088,10 @@
                 } else {
                     const { error } = await dbClient.from('zp_password_resets').insert([payload]);
                     if (error) {
-                        // Fallback jika kolom requested_password belum ditambahkan di tabel lama
+                        // Fallback kompatibilitas jika kolom baru belum ditambahkan di tabel lama
                         const fallbackPayload = {
                             user_id: targetUser.id,
-                            email: rawEmail,
+                            email: rawZpEmail,
                             reason: encodedReason,
                             status: 'pending',
                             created_at: new Date().toISOString()
@@ -1022,7 +1101,7 @@
                     }
                 }
                 await fetchData();
-                showToast('Permintaan sandi baru berhasil dikirim! Saat disetujui Admin, sandi Anda otomatis berubah dan dikirimkan ke ruang Chat Anda.', 'success');
+                showToast(`Permintaan sandi baru berhasil dikirim! Setelah disetujui Admin, sandi baru akan dikirimkan ke Gmail <b>${activeGmail}</b>.`, 'success');
                 appState.showForgotForm = false;
                 renderApp();
             } catch (err) {
@@ -1030,16 +1109,30 @@
             }
         };
 
-        // Helper mengekstrak request sandi baru & alasan bersih dari objek reset
+        // Helper mengekstrak Gmail aktif, Nomor Telepon, Request Sandi Baru & Alasan dari objek reset
         const parseResetRequestData = (r) => {
             let reqPass = r.requested_password || '';
+            let activeGmail = r.active_email || '';
+            let phoneNum = r.phone_number || '';
             let cleanReason = r.reason || '';
-            const match = cleanReason.match(/^\[SANDI_BARU:([^\]]+)\]\s*/);
-            if (match) {
-                if (!reqPass) reqPass = match[1];
-                cleanReason = cleanReason.slice(match[0].length);
+
+            const gmailMatch = cleanReason.match(/\[GMAIL:([^\]]+)\]/);
+            if (gmailMatch) {
+                if (!activeGmail) activeGmail = gmailMatch[1];
+                cleanReason = cleanReason.replace(gmailMatch[0], '');
             }
-            return { reqPass, cleanReason };
+            const phoneMatch = cleanReason.match(/\[TELP:([^\]]+)\]/);
+            if (phoneMatch) {
+                if (!phoneNum) phoneNum = phoneMatch[1];
+                cleanReason = cleanReason.replace(phoneMatch[0], '');
+            }
+            const passMatch = cleanReason.match(/\[SANDI_BARU:([^\]]+)\]/);
+            if (passMatch) {
+                if (!reqPass) reqPass = passMatch[1];
+                cleanReason = cleanReason.replace(passMatch[0], '');
+            }
+            cleanReason = cleanReason.trim();
+            return { reqPass, activeGmail, phoneNum, cleanReason };
         };
 
         // =====================================================================
@@ -1436,7 +1529,7 @@
             showToast('<i class="fas fa-check-circle mr-1"></i> Link berita berhasil disalin!', 'success');
         };
 
-        // Modal Pop-up Baca Berita (Dilengkapi Space Logo Lapang, Tombol Simpan Terkunci untuk Tamu & Rekomendasi Berita)
+        // Modal Pop-up Baca Berita (Logo Proporsional Tanpa Shape di Belakang, Tombol Simpan Terkunci untuk Tamu & Rekomendasi Berita)
         window.openArticlePopup = (articleId) => {
             const a = appState.articles.find(x => String(x.id) === String(articleId));
             if (!a) return;
@@ -1454,10 +1547,10 @@
 
             modal.innerHTML = `
                 <div class="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden animate-fade my-6 max-h-[92vh] flex flex-col border border-slate-100" onclick="event.stopPropagation()">
-                    <!-- Header Pop-up dengan Space Logo Lapang & Tidak Kecil -->
+                    <!-- Header Pop-up dengan Logo Proporsional & Tanpa Shape Latar Belakang -->
                     <div class="p-4 px-6 bg-white border-b border-slate-100 flex justify-between items-center gap-4 sticky top-0 z-20">
-                        <div class="bg-white px-3 py-1.5 rounded-2xl flex items-center shrink-0 min-w-[165px] md:min-w-[220px]">
-                            <img src="${LOGO_URL}" alt="Logo Zeniopost" onerror="this.src='${LOGO_FALLBACK_URL}'" class="h-11 sm:h-12 md:h-14 w-auto max-w-[190px] md:max-w-[250px] object-contain block">
+                        <div class="flex items-center shrink-0">
+                            <img src="${LOGO_URL}" alt="Logo Zeniopost" onerror="this.src='${LOGO_FALLBACK_URL}'" class="h-12 sm:h-14 md:h-16 w-auto object-contain block">
                         </div>
                         <div class="flex items-center gap-1.5 md:gap-2 flex-wrap justify-end">
                             <button type="button" onclick="window.toggleSaveArticle('${a.id}', event); if(window.isUserLoggedIn()) window.openArticlePopup('${a.id}')" class="px-3.5 py-2 rounded-xl text-xs font-extrabold border flex items-center gap-1.5 transition ${isGuest ? 'bg-slate-100 text-slate-500 border-slate-200 hover:bg-amber-50 hover:text-amber-700' : saved ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-slate-100 hover:bg-amber-50 text-slate-700 border-slate-200'}">
@@ -1639,12 +1732,48 @@
             renderApp();
         };
 
-        window.previewImageUpload = (event, elId) => {
+        window.previewImageUpload = (event, elId, wrapId = null) => {
             const f = event.target.files?.[0];
             const el = document.getElementById(elId);
+            const wrap = wrapId ? document.getElementById(wrapId) : null;
             if (f && el) {
                 const r = new FileReader();
-                r.onload = e => { el.style.backgroundImage = `url('${e.target.result}')`; el.classList.remove('hidden'); };
+                r.onload = e => {
+                    el.style.backgroundImage = `url('${e.target.result}')`;
+                    el.classList.remove('hidden');
+                    if (wrap) wrap.classList.remove('hidden');
+                };
+                r.readAsDataURL(f);
+            }
+        };
+
+        // Tombol X (Batal) untuk Membatalkan Unggah Gambar Berita
+        window.clearImageUpload = (inputId, previewId = null, wrapId = null) => {
+            const inp = document.getElementById(inputId);
+            if (inp) inp.value = '';
+            if (previewId) {
+                const el = document.getElementById(previewId);
+                if (el) {
+                    el.style.backgroundImage = '';
+                    el.classList.add('hidden');
+                }
+            }
+            if (wrapId) {
+                const w = document.getElementById(wrapId);
+                if (w) w.classList.add('hidden');
+            }
+        };
+
+        window.previewAdminOfficialImage = (event) => {
+            const f = event.target.files?.[0];
+            const wrap = document.getElementById('preview_a_wrap');
+            const img = document.getElementById('preview_a_img');
+            if (f && wrap && img) {
+                const r = new FileReader();
+                r.onload = e => {
+                    img.src = e.target.result;
+                    wrap.classList.remove('hidden');
+                };
                 r.readAsDataURL(f);
             }
         };
@@ -1744,15 +1873,17 @@
                 if (document.getElementById('f_social')) document.getElementById('f_social').value = info.social || '';
                 if (document.getElementById('f_content')) document.getElementById('f_content').innerHTML = d.content || '';
                 const prev = document.getElementById('preview_f');
+                const wrap = document.getElementById('preview_f_wrap');
                 if (prev && d.image_url) {
                     prev.style.backgroundImage = `url('${d.image_url}')`;
                     prev.classList.remove('hidden');
+                    if (wrap) wrap.classList.remove('hidden');
                 }
             }, 60);
         };
 
         // =====================================================================
-        // 15. AKSI ADMIN DASHBOARD (TERMASUK LIHAT SANDI & KIRIM SANDI BARU KE CHAT)
+        // 15. AKSI ADMIN DASHBOARD (TERMASUK LIHAT SANDI & KIRIM SANDI BARU KE GMAIL)
         // =====================================================================
         window.switchAdminTab = (tab) => {
             appState.adminTab = tab;
@@ -1784,35 +1915,23 @@
 
         // Saat Admin ACC Permintaan Sandi Baru:
         // 1. Langsung perbarui password_hash user di tabel zp_users
-        // 2. Ubah status reset menjadi approved/completed
-        // 3. Otomatis kirimkan pesan ke Chat pengguna berisi informasi kata sandi barunya
+        // 2. Ubah status reset menjadi approved
+        // 3. Buka pengirim Gmail (bukan ke Chat) agar kata sandi baru dikirimkan ke alamat Gmail aktif pengguna
         window.adminActPasswordReset = async (resetId, nextStatus) => {
             try {
                 const targetReset = appState.passwordResets.find(x => String(x.id) === String(resetId));
                 if (!targetReset) return;
 
-                const { reqPass } = parseResetRequestData(targetReset);
-                const finalNewPassword = reqPass || 'zeniopost123';
+                const { reqPass, activeGmail, phoneNum } = parseResetRequestData(targetReset);
+                const finalNewPassword = (reqPass || 'zeniopost123').slice(0, 15);
 
                 if (nextStatus === 'approved') {
-                    const autoChatMsg = {
-                        user_id: targetReset.user_id,
-                        sender_role: 'admin',
-                        category: 'Pemulihan Kata Sandi',
-                        message: `Halo! Permintaan penggantian kata sandi untuk akun ${targetReset.email} telah DISETUJUI oleh Admin.\n\nKata Sandi Baru Anda adalah: ${finalNewPassword}\n\nSilakan gunakan kata sandi baru tersebut untuk masuk ke akun Zeniopost Anda.`,
-                        is_read: false,
-                        created_at: new Date().toISOString()
-                    };
-
                     if (IS_PREVIEW) {
                         const u = mockUsers.find(x => String(x.id) === String(targetReset.user_id));
                         if (u) u.password_hash = finalNewPassword;
                         targetReset.status = 'approved';
-                        autoChatMsg.id = 'm_' + Date.now();
-                        mockMessages.push(autoChatMsg);
-                        appState.messages.push(autoChatMsg);
                     } else {
-                        // 1. Update kata sandi akun pengguna
+                        // 1. Update kata sandi akun pengguna di zp_users
                         const { error: uErr } = await dbClient
                             .from('zp_users')
                             .update({ password_hash: finalNewPassword })
@@ -1824,12 +1943,19 @@
                             .from('zp_password_resets')
                             .update({ status: 'approved', updated_at: new Date().toISOString() })
                             .eq('id', resetId);
-
-                        // 3. Kirim pesan otomatis ke Chat pengguna
-                        await dbClient.from('zp_messages').insert([autoChatMsg]);
                     }
 
-                    showToast(`Disetujui! Kata sandi akun ${targetReset.email} telah diubah menjadi "${finalNewPassword}" dan dikirimkan otomatis ke Chat pengguna.`, 'success');
+                    // 3. Buka Compose Gmail menuju email Google aktif pengguna
+                    if (activeGmail) {
+                        const subject = encodeURIComponent('Pemulihan Kata Sandi Akun Zeniopost Anda');
+                        const body = encodeURIComponent(
+                            `Halo Pengguna Zeniopost,\n\nPermintaan penggantian kata sandi untuk akun Zeniopost (${targetReset.email}) dengan nomor telepon (${phoneNum || '-'}) telah DISETUJUI oleh Admin.\n\nBerikut adalah Kata Sandi Baru Anda:\n${finalNewPassword}\n\nSilakan gunakan kata sandi baru tersebut untuk masuk di portal Zeniopost.\n\nSalam,\nTim Admin Zeniopost`
+                        );
+                        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(activeGmail)}&su=${subject}&body=${body}`;
+                        window.open(gmailUrl, '_blank', 'noopener,noreferrer');
+                    }
+
+                    showToast(`Disetujui! Kata sandi akun ${targetReset.email} telah diperbarui dan siap dikirimkan ke Gmail ${activeGmail || 'pengguna'}.`, 'success');
                 } else {
                     if (IS_PREVIEW) {
                         targetReset.status = 'rejected';
@@ -1975,16 +2101,16 @@
             `;
         };
 
-        // Header dengan Space Tempat Logo yang Kosong, Bersih, dan Tidak Kecil
+        // Header dengan Logo Proporsional, Tidak Kecil & Tanpa Shape di Belakang Logo
         const renderHeader = () => {
             const unreadUserChats = getUnreadChatCountForUser();
             const unreadAdminChats = getUnreadChatCountForAdmin();
 
             return `
                 <header class="bg-white/95 backdrop-blur-md sticky top-0 z-50 w-full h-22 md:h-24 py-2 shadow-sm flex justify-between items-center gap-3 md:gap-6 px-4 md:px-8 border-b border-slate-100">
-                    <!-- Area Khusus Tempat Logo: Lapang, Proporsional & Tidak Kecil -->
-                    <div class="flex items-center justify-start cursor-pointer shrink-0 bg-white px-2.5 py-1.5 rounded-2xl min-w-[165px] sm:min-w-[215px] md:min-w-[265px] h-16 md:h-20" onclick="app.navigate('home')" title="Beranda Zeniopost">
-                        <img src="${LOGO_URL}" alt="Logo Zeniopost" fetchpriority="high" decoding="async" onerror="this.src='${LOGO_FALLBACK_URL}'" class="h-12 sm:h-14 md:h-16 w-auto max-w-[195px] sm:max-w-[235px] md:max-w-[280px] object-contain block">
+                    <!-- Logo Utama: Tidak Kecil, Proporsional & Tanpa Shape/Kotak di Belakang Logo -->
+                    <div class="flex items-center justify-start cursor-pointer shrink-0 py-1" onclick="app.navigate('home')" title="Beranda Zeniopost">
+                        <img src="${LOGO_URL}" alt="Logo Zeniopost" fetchpriority="high" decoding="async" onerror="this.src='${LOGO_FALLBACK_URL}'" class="h-12 sm:h-14 md:h-16 w-auto object-contain block">
                     </div>
 
                     <!-- Pencarian Judul & Kalender Tanggal -->
@@ -2026,7 +2152,7 @@
                             ` : `
                                 <i class="fas fa-user-circle text-blue-600 text-base"></i>
                             `}
-                            <span class="hidden sm:inline truncate max-w-[95px]">${appState.currentUser ? appState.currentUser.username : 'Akun'}</span>
+                            <span class="hidden sm:inline truncate max-w-[95px]">${appState.currentUser ? appState.currentUser.full_name : 'Akun'}</span>
                         </button>
 
                         <button onclick="app.navigate('admin')" title="Dashboard Admin" class="relative w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center hover:bg-blue-600 transition">
@@ -2326,9 +2452,14 @@
 
                                 <div class="border border-slate-200 rounded-xl bg-slate-50 p-4">
                                     <label class="block text-xs font-bold text-slate-500 mb-2">Unggah Gambar Sampul Berita</label>
-                                    <input type="file" id="f_image" accept="image/*" onchange="previewImageUpload(event, 'preview_f')" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white cursor-pointer">
+                                    <input type="file" id="f_image" accept="image/*" onchange="previewImageUpload(event, 'preview_f', 'preview_f_wrap')" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white cursor-pointer">
                                 </div>
-                                <div id="preview_f" class="hidden w-full h-44 bg-cover bg-center rounded-xl border border-slate-200"></div>
+                                <div id="preview_f_wrap" class="hidden relative">
+                                    <div id="preview_f" class="w-full h-44 bg-cover bg-center rounded-xl border border-slate-200"></div>
+                                    <button type="button" onclick="window.clearImageUpload('f_image', 'preview_f', 'preview_f_wrap')" title="Batalkan Gambar" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center shadow-md transition">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
 
                                 <div>
                                     <label class="block text-xs font-extrabold text-slate-600 mb-1.5">Editor Artikel (Tebal, Miring, Heading, Perataan, Tautan, Kutipan & Daftar Bernomor Bertingkat Otomatis)</label>
@@ -2377,7 +2508,7 @@
                 `;
             }
 
-            // F. HALAMAN SISTEM AKUN (LOGIN + LUPA SANDI MENYATU DI BAGIAN MASUK AKUN, VISIBILITAS PASSWORD, & PROFIL)
+            // F. HALAMAN SISTEM AKUN (LOGIN + LUPA SANDI MENYATU DI BAGIAN MASUK AKUN, VISIBILITAS PASSWORD MAKS 15 KARAKTER, & PROFIL)
             if (appState.view === 'account') {
                 if (appState.currentUser) {
                     const u = appState.currentUser;
@@ -2385,7 +2516,7 @@
                     return `
                         <div class="max-w-4xl mx-auto w-full p-4 md:p-8 animate-fade space-y-6">
                             <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-center gap-6">
-                                <!-- Foto Profil Maks 750x750 px -->
+                                <!-- Foto Profil Maks 750x750 px + Tombol X untuk Batal saat Pilih File -->
                                 <div class="flex flex-col items-center gap-3 shrink-0">
                                     ${u.avatar_url ? `
                                         <img src="${u.avatar_url}" alt="${u.full_name}" class="w-28 h-28 rounded-full object-cover border-4 border-blue-100 shadow-md">
@@ -2396,8 +2527,8 @@
                                     `}
                                     <div class="flex flex-wrap items-center justify-center gap-2">
                                         <label class="cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-extrabold px-3 py-1.5 rounded-xl transition">
-                                            <i class="fas fa-camera mr-1"></i> ${u.avatar_url ? 'Ganti Foto' : 'Unggah Foto'}
-                                            <input type="file" id="profile_avatar_input" accept="image/*" onchange="window.handleUpdateAvatar(event)" class="hidden">
+                                            <i class="fas fa-camera mr-1"></i> ${u.avatar_url ? 'Ganti Foto' : 'Pilih Foto'}
+                                            <input type="file" id="profile_avatar_input" accept="image/*" onchange="window.previewProfileAvatarSelection(event)" class="hidden">
                                         </label>
                                         ${u.avatar_url ? `
                                             <button onclick="window.handleRemoveAvatar()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-extrabold px-3 py-1.5 rounded-xl transition">
@@ -2405,6 +2536,20 @@
                                             </button>
                                         ` : ''}
                                     </div>
+
+                                    <!-- Pratinjau Pilihan Foto Baru dengan Tombol X untuk Cancel -->
+                                    <div id="profile_pending_avatar_box" class="hidden flex-col items-center gap-2 p-3 rounded-2xl bg-slate-50 border border-blue-200">
+                                        <div class="relative">
+                                            <img id="profile_pending_avatar_img" src="" class="w-20 h-20 rounded-full object-cover border-2 border-blue-500">
+                                            <button type="button" onclick="window.cancelProfileAvatarSelection()" title="Batal Unggah Foto" class="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs flex items-center justify-center shadow">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <button type="button" onclick="window.handleUpdateAvatar()" class="bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-extrabold px-3 py-1.5 rounded-xl shadow-sm">
+                                            <i class="fas fa-check mr-1"></i> Simpan Foto
+                                        </button>
+                                    </div>
+
                                     <span class="text-[10px] font-bold text-slate-400">Maksimal dimensi 750 × 750 piksel</span>
                                 </div>
 
@@ -2414,7 +2559,7 @@
                                         <i class="fas fa-check-circle"></i> Akun Zeniopost Aktif
                                     </div>
                                     <h2 class="text-2xl font-extrabold text-slate-900">${u.full_name}</h2>
-                                    <p class="text-sm font-bold text-blue-600">@${u.username} • ${u.email}</p>
+                                    <p class="text-sm font-bold text-blue-600">${u.email}</p>
                                     <div class="pt-3 flex flex-wrap justify-center md:justify-start gap-2.5">
                                         <button onclick="app.navigate('submit')" class="bg-slate-900 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl"><i class="fas fa-pen-nib mr-1"></i> Tulis Artikel</button>
                                         <button onclick="app.navigate('saved')" class="bg-amber-500 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl"><i class="fas fa-bookmark mr-1"></i> Berita Tersimpan (${appState.savedArticles.length})</button>
@@ -2469,9 +2614,9 @@
                                             <input type="text" id="usr_login_email" required placeholder="nama@zeniopost.com" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm outline-none focus:border-blue-500">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-extrabold text-slate-600 mb-1">Kata Sandi</label>
+                                            <label class="block text-xs font-extrabold text-slate-600 mb-1">Kata Sandi (Maks. 15 Karakter)</label>
                                             <div class="relative">
-                                                <input type="password" id="usr_login_pass" required placeholder="Masukkan kata sandi..." class="w-full p-3.5 pr-11 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm outline-none focus:border-blue-500">
+                                                <input type="password" id="usr_login_pass" required maxlength="15" placeholder="Masukkan kata sandi..." class="w-full p-3.5 pr-11 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm outline-none focus:border-blue-500">
                                                 <button type="button" onclick="window.togglePasswordVisibility('usr_login_pass', 'icon_usr_login_pass')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition" title="Tampilkan / Sembunyikan Kata Sandi">
                                                     <i id="icon_usr_login_pass" class="fas fa-eye text-slate-400"></i>
                                                 </button>
@@ -2487,7 +2632,7 @@
                                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3.5 rounded-xl shadow-md transition">Masuk ke Zeniopost</button>
                                     </form>
 
-                                    <!-- Bagian Lupa Kata Sandi yang Menyatu Langsung di Dalam Masuk Akun -->
+                                    <!-- Bagian Lupa Kata Sandi yang Menyatu Langsung di Dalam Masuk Akun (Wajib Gmail Aktif & Nomor Telepon) -->
                                     ${appState.showForgotForm ? `
                                         <div class="pt-5 border-t border-slate-200 animate-fade">
                                             <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-4 space-y-3.5">
@@ -2497,20 +2642,28 @@
                                                             <i class="fas fa-unlock-alt text-amber-600"></i> Permohonan Ganti Kata Sandi Baru
                                                         </h3>
                                                         <p class="text-[11px] font-semibold text-slate-600 mt-0.5 leading-relaxed">
-                                                            Kirimkan email, request kata sandi baru yang Anda inginkan, beserta alasannya. Saat disetujui Admin, sandi baru akan aktif dan dikonfirmasi melalui <b>Chat</b>.
+                                                            Wajib mengisi <b>Email Google (@gmail.com) aktif</b> dan <b>Nomor Telepon</b>. Saat disetujui Admin, kata sandi baru Anda akan dikirimkan langsung ke <b>Gmail</b> Anda.
                                                         </p>
                                                     </div>
                                                 </div>
 
                                                 <form onsubmit="window.handleRequestPasswordRecovery(event)" class="space-y-3">
                                                     <div>
-                                                        <label class="block text-[11px] font-extrabold text-slate-700 mb-1">Email Akun (@zeniopost.com)</label>
-                                                        <input type="text" id="rec_email" required placeholder="nama@zeniopost.com" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold text-xs md:text-sm outline-none focus:border-blue-500">
+                                                        <label class="block text-[11px] font-extrabold text-slate-700 mb-1">Akun Zeniopost yang Dipulihkan</label>
+                                                        <input type="text" id="rec_zp_email" required placeholder="nama@zeniopost.com" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold text-xs md:text-sm outline-none focus:border-blue-500">
                                                     </div>
                                                     <div>
-                                                        <label class="block text-[11px] font-extrabold text-slate-700 mb-1">Request Kata Sandi Baru</label>
+                                                        <label class="block text-[11px] font-extrabold text-slate-700 mb-1">Email Google Aktif (Wajib @gmail.com untuk Terima Sandi Baru)</label>
+                                                        <input type="email" id="rec_gmail" required placeholder="namaanda@gmail.com" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold text-xs md:text-sm outline-none focus:border-blue-500">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-[11px] font-extrabold text-slate-700 mb-1">Nomor Telepon / WhatsApp Aktif (Wajib)</label>
+                                                        <input type="tel" id="rec_phone" required placeholder="Contoh: 081234567890" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold text-xs md:text-sm outline-none focus:border-blue-500">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-[11px] font-extrabold text-slate-700 mb-1">Request Kata Sandi Baru (6 - 15 Karakter)</label>
                                                         <div class="relative">
-                                                            <input type="password" id="rec_new_password" required minlength="6" placeholder="Ketik kata sandi baru yang diinginkan..." class="w-full p-3 pr-11 bg-white border border-slate-200 rounded-xl font-bold text-xs md:text-sm outline-none focus:border-blue-500">
+                                                            <input type="password" id="rec_new_password" required minlength="6" maxlength="15" placeholder="Ketik kata sandi baru (maks. 15 karakter)..." class="w-full p-3 pr-11 bg-white border border-slate-200 rounded-xl font-bold text-xs md:text-sm outline-none focus:border-blue-500">
                                                             <button type="button" onclick="window.togglePasswordVisibility('rec_new_password', 'icon_rec_new_pass')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition" title="Tampilkan / Sembunyikan Kata Sandi">
                                                                 <i id="icon_rec_new_pass" class="fas fa-eye text-slate-400"></i>
                                                             </button>
@@ -2529,20 +2682,15 @@
                                     ` : ''}
                                 </div>
                             ` : `
-                                <!-- Form Daftar Akun Baru dengan Visibilitas Password -->
+                                <!-- Form Daftar Akun Baru Tanpa Username Unik, Langsung Otomatis Login & Tombol X Batal Foto -->
                                 <form onsubmit="window.handleUserRegister(event)" class="space-y-4">
                                     <div class="text-center mb-2">
                                         <h2 class="text-xl font-extrabold text-slate-900">Pendaftaran Akun Zeniopost</h2>
-                                        <p class="text-xs font-semibold text-slate-500 mt-1">Setiap pendaftaran memerlukan persetujuan Admin sebelum aktif</p>
+                                        <p class="text-xs font-semibold text-slate-500 mt-1">Akun langsung aktif dan otomatis masuk setelah pendaftaran</p>
                                     </div>
                                     <div>
                                         <label class="block text-xs font-extrabold text-slate-600 mb-1">Nama Lengkap</label>
                                         <input type="text" id="reg_fullname" required placeholder="Contoh: Budi Santoso" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm outline-none focus:border-blue-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-extrabold text-slate-600 mb-1">Username Unik (Tanpa Spasi)</label>
-                                        <input type="text" id="reg_username" required placeholder="Contoh: budisantoso" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm outline-none focus:border-blue-500">
-                                        <span class="text-[10px] font-semibold text-slate-400">Tidak boleh sama dengan pengguna lain walau beda huruf besar/kecil.</span>
                                     </div>
                                     <div>
                                         <label class="block text-xs font-extrabold text-slate-600 mb-1">Nama Email Zeniopost (Domain Otomatis)</label>
@@ -2552,9 +2700,9 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-extrabold text-slate-600 mb-1">Kata Sandi</label>
+                                        <label class="block text-xs font-extrabold text-slate-600 mb-1">Kata Sandi (6 - 15 Karakter)</label>
                                         <div class="relative">
-                                            <input type="password" id="reg_password" required minlength="6" placeholder="Minimal 6 karakter" class="w-full p-3.5 pr-11 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm outline-none focus:border-blue-500">
+                                            <input type="password" id="reg_password" required minlength="6" maxlength="15" placeholder="6 - 15 karakter" class="w-full p-3.5 pr-11 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm outline-none focus:border-blue-500">
                                             <button type="button" onclick="window.togglePasswordVisibility('reg_password', 'icon_reg_pass')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition" title="Tampilkan / Sembunyikan Kata Sandi">
                                                 <i id="icon_reg_pass" class="fas fa-eye text-slate-400"></i>
                                             </button>
@@ -2562,9 +2710,15 @@
                                     </div>
                                     <div>
                                         <label class="block text-xs font-extrabold text-slate-600 mb-1">Foto Profil (Opsional, Maks 750 × 750 px)</label>
-                                        <input type="file" id="reg_avatar" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white font-bold">
+                                        <input type="file" id="reg_avatar" accept="image/*" onchange="window.previewRegisterAvatar(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white font-bold">
+                                        <div id="reg_avatar_preview_wrap" class="hidden mt-3 relative inline-block">
+                                            <img id="reg_avatar_preview_img" src="" class="w-20 h-20 rounded-full object-cover border-2 border-blue-400 shadow-sm">
+                                            <button type="button" onclick="window.clearRegisterAvatar()" title="Batalkan Foto Profil" class="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs flex items-center justify-center shadow">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <button type="submit" id="btn_reg_submit" class="w-full bg-slate-900 hover:bg-blue-600 text-white font-extrabold py-3.5 rounded-xl shadow-md transition">Daftar Akun Zeniopost</button>
+                                    <button type="submit" id="btn_reg_submit" class="w-full bg-slate-900 hover:bg-blue-600 text-white font-extrabold py-3.5 rounded-xl shadow-md transition">Daftar & Masuk Sekarang</button>
                                 </form>
                             `}
                         </div>
@@ -2719,7 +2873,7 @@
                                                         <span>${u.full_name}</span>
                                                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${u.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : u.status === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}">${u.status.toUpperCase()}</span>
                                                     </div>
-                                                    <div class="text-xs font-bold text-blue-600">@${u.username} • ${u.email}</div>
+                                                    <div class="text-xs font-bold text-blue-600">${u.email}</div>
                                                     <!-- Informasi Sandi Pengguna untuk Admin -->
                                                     <div class="inline-flex items-center gap-2 bg-white border border-slate-200 px-3 py-1 rounded-lg text-xs font-bold text-slate-700">
                                                         <i class="fas fa-key text-amber-500"></i>
@@ -2730,8 +2884,8 @@
                                                 </div>
                                             </div>
                                             <div class="flex flex-wrap items-center gap-2">
-                                                ${u.status !== 'approved' ? `<button onclick="window.adminActUser('${u.id}', 'approve')" class="bg-emerald-600 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl"><i class="fas fa-check mr-1"></i>Setujui</button>` : ''}
-                                                ${u.status !== 'rejected' ? `<button onclick="window.adminActUser('${u.id}', 'reject')" class="bg-amber-500 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl"><i class="fas fa-ban mr-1"></i>Tolak</button>` : ''}
+                                                ${u.status !== 'approved' ? `<button onclick="window.adminActUser('${u.id}', 'approve')" class="bg-emerald-600 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl"><i class="fas fa-check mr-1"></i>Aktifkan</button>` : ''}
+                                                ${u.status !== 'rejected' ? `<button onclick="window.adminActUser('${u.id}', 'reject')" class="bg-amber-500 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl"><i class="fas fa-ban mr-1"></i>Nonaktifkan</button>` : ''}
                                                 ${u.avatar_url ? `<button onclick="window.handleRemoveAvatar('${u.id}')" class="bg-white border border-slate-300 text-slate-700 text-xs font-extrabold px-3 py-2 rounded-xl"><i class="fas fa-image mr-1"></i>Hapus Foto</button>` : ''}
                                                 <button onclick="window.adminActUser('${u.id}', 'delete')" class="bg-rose-50 text-rose-600 border border-rose-200 text-xs font-extrabold px-3 py-2 rounded-xl"><i class="fas fa-trash"></i></button>
                                             </div>
@@ -2743,18 +2897,26 @@
                             <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
                                 <div class="flex flex-wrap items-center justify-between gap-2">
                                     <h3 class="font-extrabold text-lg text-slate-900">Permintaan Ganti Kata Sandi Baru (${appState.passwordResets.length})</h3>
-                                    <span class="text-xs font-bold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full">Saat di-ACC, sandi otomatis diubah & dikirim ke Chat pengguna</span>
+                                    <span class="text-xs font-bold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full">Saat di-ACC, sandi otomatis diubah & dikirim ke Gmail aktif pengguna</span>
                                 </div>
                                 ${appState.passwordResets.length === 0 ? `<p class="text-xs font-bold text-slate-400">Tidak ada permintaan pemulihan kata sandi.</p>` : `
                                     <div class="space-y-3">
                                         ${appState.passwordResets.map(r => {
-                                            const { reqPass, cleanReason } = parseResetRequestData(r);
+                                            const { reqPass, activeGmail, phoneNum, cleanReason } = parseResetRequestData(r);
                                             return `
                                                 <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                                     <div class="space-y-1.5">
-                                                        <div class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-                                                            <span>${r.email}</span>
+                                                        <div class="font-extrabold text-sm text-slate-900 flex items-center gap-2 flex-wrap">
+                                                            <span>Akun Zeniopost: ${r.email}</span>
                                                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${r.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : r.status === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}">${r.status.toUpperCase()}</span>
+                                                        </div>
+                                                        <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
+                                                            <span class="bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-slate-700">
+                                                                <i class="fas fa-envelope text-red-500 mr-1"></i>Gmail Aktif: <b class="text-slate-900 select-all">${activeGmail || '-'}</b>
+                                                            </span>
+                                                            <span class="bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-slate-700">
+                                                                <i class="fas fa-phone text-emerald-600 mr-1"></i>No. Telp: <b class="text-slate-900 select-all">${phoneNum || '-'}</b>
+                                                            </span>
                                                         </div>
                                                         <div class="inline-flex items-center gap-2 bg-white border border-blue-200 px-3 py-1 rounded-lg text-xs font-bold text-blue-900">
                                                             <i class="fas fa-lock-open text-blue-600"></i>
@@ -2767,11 +2929,17 @@
                                                     ${r.status === 'pending' ? `
                                                         <div class="flex items-center gap-2 shrink-0">
                                                             <button onclick="window.adminActPasswordReset('${r.id}', 'approved')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl shadow-sm transition">
-                                                                <i class="fas fa-check-circle mr-1"></i> ACC & Kirim ke Chat
+                                                                <i class="fas fa-envelope mr-1"></i> ACC & Kirim ke Gmail
                                                             </button>
                                                             <button onclick="window.adminActPasswordReset('${r.id}', 'rejected')" class="bg-rose-50 text-rose-600 border border-rose-200 text-xs font-extrabold px-4 py-2.5 rounded-xl">
                                                                 Tolak
                                                             </button>
+                                                        </div>
+                                                    ` : activeGmail ? `
+                                                        <div class="flex items-center gap-2 shrink-0">
+                                                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(activeGmail)}&su=${encodeURIComponent('Pemulihan Kata Sandi Akun Zeniopost Anda')}&body=${encodeURIComponent(`Halo,\n\nKata sandi baru untuk akun Zeniopost (${r.email}) Anda adalah: ${reqPass}`)}" target="_blank" rel="noopener noreferrer" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-extrabold px-3.5 py-2 rounded-xl">
+                                                                <i class="fas fa-paper-plane mr-1"></i> Buka Gmail Lagi
+                                                            </a>
                                                         </div>
                                                     ` : ''}
                                                 </div>
@@ -2920,7 +3088,13 @@
                                                 <option value="">Pilih Kategori...</option>
                                                 ${appState.topics.map(t => `<option value="${t.id}">${t.name}</option>`).join('')}
                                             </select>
-                                            <input type="file" id="a_image" accept="image/*" required class="w-full text-xs bg-white p-2 rounded-xl">
+                                            <input type="file" id="a_image" accept="image/*" required onchange="window.previewAdminOfficialImage(event)" class="w-full text-xs bg-white p-2 rounded-xl">
+                                            <div id="preview_a_wrap" class="hidden relative">
+                                                <img id="preview_a_img" src="" class="w-full h-36 object-cover rounded-xl border border-blue-200 bg-white">
+                                                <button type="button" onclick="window.clearImageUpload('a_image', null, 'preview_a_wrap')" title="Batalkan Gambar" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs flex items-center justify-center shadow">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
                                             ${renderRichTextEditor('a_content', 'Tulis berita resmi Zeniopost...', '', 'min-h-[140px]')}
                                             <input type="text" id="a_social" placeholder="Sosmed (Opsional)" class="w-full p-3 bg-white rounded-xl text-xs font-bold border border-blue-100 outline-none">
                                             <button type="submit" id="btn_a" class="w-full bg-blue-600 text-white font-extrabold py-3 rounded-xl text-xs">Terbitkan Sekarang</button>
