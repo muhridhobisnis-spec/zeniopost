@@ -211,6 +211,20 @@
             localCommentLikesMap: JSON.parse(localStorage.getItem('zeniopost_comment_likes_map') || '{}')
         };
 
+        // Cek apakah endpoint preview WhatsApp (/api/share) aktif di server Vercel
+        const checkDynamicShareEndpoint = async () => {
+            try {
+                if (window.location.protocol !== 'http:' && window.location.protocol !== 'https:') return;
+                const res = await fetch('/api/share?ping=1', { method: 'GET' });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.ok) appState.hasDynamicShare = true;
+                }
+            } catch (e) {
+                appState.hasDynamicShare = false;
+            }
+        };
+
         // Data Dummy untuk Mode Uji Coba / Preview
         let mockTopics = [
             { id: '1', name: 'Teknologi' },
@@ -733,6 +747,7 @@
                         ${recs.map(r => {
                             const tObj = appState.topics.find(t => String(t.id) === String(r.topic_id));
                             const tName = tObj ? tObj.name : 'Berita';
+                            const rViews = getArticleViews(r);
                             const clickAction = isInsideModal
                                 ? `window.openArticlePopup('${r.id}')`
                                 : `app.navigate('article', '${r.id}')`;
@@ -748,7 +763,7 @@
                                         </div>
                                     </div>
                                     <div class="px-3 pb-3 pt-1 text-[10px] font-semibold text-slate-400 flex items-center justify-between">
-                                        <span><i class="far fa-clock mr-1"></i>${formatWaktu(r.created_at)}</span>
+                                        <span><i class="far fa-eye text-blue-500 mr-1"></i>${rViews}x dibaca</span>
                                         <span class="text-blue-600 font-extrabold">Baca <i class="fas fa-arrow-right ml-0.5"></i></span>
                                     </div>
                                 </div>
@@ -1491,10 +1506,23 @@
             }
             const authorUser = article.user_id
                 ? appState.zpUsers.find(u => String(u.id) === String(article.user_id))
-                : appState.zpUsers.find(u => (u.full_name || '').toLowerCase() === rawName.toLowerCase());
+                : null;
+            const hasAccount = Boolean(article.user_id || authorUser);
             const avatarUrl = authorUser?.avatar_url || '';
 
-            return { name: rawName, social, socialUrl, socialLabel, avatarUrl };
+            return { name: rawName, social, socialUrl, socialLabel, avatarUrl, hasAccount };
+        };
+
+        // Helper merender Nama Penulis + Badge Centang (Biru = Resmi Admin Zeniopost, Abu-abu = Punya Akun, Tanpa Badge = Tamu)
+        const renderAuthorNameWithBadge = (article, info = null, sizeClass = 'text-xs') => {
+            const parsed = info || parseAuthorInfo(article);
+            if (article.is_official) {
+                return `<span class="text-slate-900">Zeniopost</span> <i class="fas fa-check-circle text-blue-600 ${sizeClass}" title="Akun Resmi Zeniopost"></i>`;
+            }
+            if (parsed.hasAccount) {
+                return `<span class="text-slate-800 truncate">${parsed.name}</span> <i class="fas fa-check-circle text-slate-400 ${sizeClass}" title="Penulis Terdaftar Zeniopost"></i>`;
+            }
+            return `<span class="text-slate-800 truncate">${parsed.name}</span>`;
         };
 
         const updateMetaTags = (article) => {
@@ -1514,14 +1542,24 @@
             } catch (e) {}
         };
 
+        const getShareUrl = (articleId) => {
+            const origin = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
+                ? window.location.origin
+                : 'https://www.zeniopost.my.id';
+            if (appState.hasDynamicShare) {
+                return `${origin}/api/share?id=${articleId}`;
+            }
+            if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+                return `${window.location.origin}${window.location.pathname}?article=${articleId}`;
+            }
+            return `${origin}/?article=${articleId}`;
+        };
+
         window.shareArticle = async (articleId) => {
             const a = appState.articles.find(x => String(x.id) === String(articleId)) || appState.readArticle;
             if (!a) return;
             updateMetaTags(a);
-            const origin = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
-                ? `${window.location.origin}${window.location.pathname}`
-                : 'https://zeniopost.vercel.app/';
-            const shareUrl = `${origin}?article=${a.id}`;
+            const shareUrl = getShareUrl(a.id);
             if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '') && navigator.share) {
                 try { await navigator.share({ title: a.title, url: shareUrl }); return; } catch (e) {}
             }
@@ -1585,9 +1623,13 @@
                                 `}
                                 <div>
                                     <div class="font-extrabold text-sm md:text-base flex items-center gap-1.5">
-                                        ${a.is_official ? '<span class="text-slate-900">Zeniopost</span> <i class="fas fa-check-circle text-blue-600 text-sm"></i>' : `<span class="text-slate-800">${info.name}</span>`}
+                                        ${renderAuthorNameWithBadge(a, info, 'text-sm')}
                                     </div>
-                                    <div class="text-xs font-semibold text-slate-500 mt-0.5"><i class="far fa-clock text-blue-500 mr-1"></i>${formatWaktu(a.created_at)}</div>
+                                    <div class="text-xs font-semibold text-slate-500 mt-0.5 flex flex-wrap items-center gap-2">
+                                        <span><i class="far fa-clock text-blue-500 mr-1"></i>${formatWaktu(a.created_at)}</span>
+                                        <span>•</span>
+                                        <span class="text-blue-600 font-extrabold"><i class="far fa-eye mr-1"></i>${getArticleViews(a)}x dibaca</span>
+                                    </div>
                                 </div>
                             </div>
                             ${!a.is_official && info.socialUrl ? `
@@ -2213,6 +2255,7 @@
             const topicObj = appState.topics.find(t => String(t.id) === String(a.topic_id));
             const topicName = topicObj ? topicObj.name : 'Berita';
             const commentCount = getArticleComments(a.id).length;
+            const viewCount = getArticleViews(a);
             const plainSnippet = stripHtml(a.content) || 'Klik untuk membaca berita selengkapnya...';
             const isGuest = !appState.currentUser;
             const saved = isArticleSaved(a.id);
@@ -2255,13 +2298,14 @@
                                 `}
                                 <div class="truncate">
                                     <div class="text-xs font-extrabold truncate flex items-center gap-1 text-slate-900">
-                                        ${a.is_official ? '<span>Zeniopost</span> <i class="fas fa-check-circle text-blue-600 text-xs"></i>' : `<span class="truncate">${info.name}</span>`}
+                                        ${renderAuthorNameWithBadge(a, info, 'text-xs')}
                                     </div>
                                     <div class="text-[11px] font-semibold text-slate-400 flex items-center gap-1 mt-0.5"><i class="far fa-clock"></i> ${formatWaktu(a.created_at)}</div>
                                 </div>
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
-                                <span class="bg-white text-slate-600 border border-slate-200 px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm"><i class="far fa-comment-dots text-blue-600"></i> ${commentCount}</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm" title="Jumlah Dibaca"><i class="far fa-eye text-emerald-600"></i> ${viewCount}</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm" title="Jumlah Komentar"><i class="far fa-comment-dots text-blue-600"></i> ${commentCount}</span>
                                 <button onclick="event.stopPropagation(); window.shareArticle('${a.id}')" class="bg-white hover:bg-blue-600 text-slate-700 hover:text-white border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-sm"><i class="fas fa-share-nodes"></i></button>
                             </div>
                         </div>
@@ -2315,9 +2359,13 @@
                                     ${a.is_official ? '' : info.avatarUrl ? `<img src="${info.avatarUrl}" class="w-12 h-12 rounded-full object-cover border border-blue-200">` : `<div class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold bg-slate-200 text-slate-600"><i class="fas fa-user"></i></div>`}
                                     <div>
                                         <div class="font-extrabold text-lg flex items-center gap-1.5">
-                                            ${a.is_official ? '<span class="text-slate-900">Zeniopost</span> <i class="fas fa-check-circle text-blue-600 text-base"></i>' : `<span class="text-slate-800">${info.name}</span>`}
+                                            ${renderAuthorNameWithBadge(a, info, 'text-base')}
                                         </div>
-                                        <p class="text-xs font-bold text-slate-400 mt-1"><i class="far fa-clock mr-1"></i>${formatWaktu(a.created_at)}</p>
+                                        <p class="text-xs font-bold text-slate-400 mt-1 flex flex-wrap items-center gap-2">
+                                            <span><i class="far fa-clock mr-1"></i>${formatWaktu(a.created_at)}</span>
+                                            <span>•</span>
+                                            <span class="text-blue-600 font-extrabold"><i class="far fa-eye mr-1"></i>${getArticleViews(a)}x dibaca</span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -2513,6 +2561,12 @@
                 if (appState.currentUser) {
                     const u = appState.currentUser;
                     const myArticles = appState.articles.filter(a => String(a.user_id) === String(u.id));
+                    const myApprovedArticles = myArticles.filter(a => a.status === 'approved');
+                    const myPendingArticles = myArticles.filter(a => a.status === 'pending');
+                    const myDraftArticles = myArticles.filter(a => a.status === 'draft');
+                    const totalMyViews = myApprovedArticles.reduce((acc, cur) => acc + getArticleViews(cur), 0);
+                    const totalMyComments = myApprovedArticles.reduce((acc, cur) => acc + getArticleComments(cur.id).length, 0);
+
                     return `
                         <div class="max-w-4xl mx-auto w-full p-4 md:p-8 animate-fade space-y-6">
                             <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-center gap-6">
@@ -2555,10 +2609,13 @@
 
                                 <!-- Detail Akun Zeniopost -->
                                 <div class="flex-1 text-center md:text-left space-y-2">
-                                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-extrabold border border-emerald-200">
-                                        <i class="fas fa-check-circle"></i> Akun Zeniopost Aktif
+                                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-extrabold border border-slate-200">
+                                        <i class="fas fa-check-circle text-slate-400"></i> Penulis Terverifikasi (Badge Abu-abu)
                                     </div>
-                                    <h2 class="text-2xl font-extrabold text-slate-900">${u.full_name}</h2>
+                                    <h2 class="text-2xl font-extrabold text-slate-900 flex items-center justify-center md:justify-start gap-1.5">
+                                        <span>${u.full_name}</span>
+                                        <i class="fas fa-check-circle text-slate-400 text-lg" title="Penulis Terdaftar Zeniopost"></i>
+                                    </h2>
                                     <p class="text-sm font-bold text-blue-600">${u.email}</p>
                                     <div class="pt-3 flex flex-wrap justify-center md:justify-start gap-2.5">
                                         <button onclick="app.navigate('submit')" class="bg-slate-900 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl"><i class="fas fa-pen-nib mr-1"></i> Tulis Artikel</button>
@@ -2569,22 +2626,80 @@
                                 </div>
                             </div>
 
-                            <!-- Riwayat Pengajuan Artikel Milik Pengguna -->
+                            <!-- Analitik Performa Artikel Pengguna -->
+                            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <h3 class="font-extrabold text-lg text-slate-900 flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i class="fas fa-chart-pie"></i></span>
+                                        Analitik Akun & Performa Berita Saya
+                                    </h3>
+                                    <span class="text-[11px] font-bold text-slate-400">Data pembacaan real-time</span>
+                                </div>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+                                    <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-100">
+                                        <div class="text-[11px] font-extrabold text-blue-600 uppercase">Total Dibaca</div>
+                                        <div class="text-2xl font-black text-slate-900 mt-1 flex items-center gap-1.5">
+                                            <i class="far fa-eye text-blue-600 text-lg"></i> ${totalMyViews}
+                                        </div>
+                                        <div class="text-[10px] font-semibold text-slate-500 mt-0.5">Kali dilihat publik</div>
+                                    </div>
+                                    <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100">
+                                        <div class="text-[11px] font-extrabold text-emerald-600 uppercase">Berita Tayang</div>
+                                        <div class="text-2xl font-black text-slate-900 mt-1 flex items-center gap-1.5">
+                                            <i class="fas fa-check-circle text-emerald-600 text-lg"></i> ${myApprovedArticles.length}
+                                        </div>
+                                        <div class="text-[10px] font-semibold text-slate-500 mt-0.5">Disetujui Admin</div>
+                                    </div>
+                                    <div class="p-4 rounded-2xl bg-purple-50/70 border border-purple-100">
+                                        <div class="text-[11px] font-extrabold text-purple-600 uppercase">Total Komentar</div>
+                                        <div class="text-2xl font-black text-slate-900 mt-1 flex items-center gap-1.5">
+                                            <i class="far fa-comments text-purple-600 text-lg"></i> ${totalMyComments}
+                                        </div>
+                                        <div class="text-[10px] font-semibold text-slate-500 mt-0.5">Tanggapan pembaca</div>
+                                    </div>
+                                    <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-100">
+                                        <div class="text-[11px] font-extrabold text-amber-600 uppercase">Menunggu / Draf</div>
+                                        <div class="text-2xl font-black text-slate-900 mt-1 flex items-center gap-1.5">
+                                            <i class="fas fa-hourglass-half text-amber-500 text-lg"></i> ${myPendingArticles.length + myDraftArticles.length}
+                                        </div>
+                                        <div class="text-[10px] font-semibold text-slate-500 mt-0.5">${myPendingArticles.length} Pending • ${myDraftArticles.length} Draf</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Riwayat Pengajuan Artikel Milik Pengguna Beserta Statistik Pembaca per Artikel -->
                             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                                <h3 class="font-extrabold text-lg text-slate-900 mb-4">Riwayat Artikel & Draf Saya (${myArticles.length})</h3>
+                                <h3 class="font-extrabold text-lg text-slate-900 mb-4">Riwayat Artikel & Statistik Pembaca (${myArticles.length})</h3>
                                 ${myArticles.length === 0 ? `<p class="text-xs font-bold text-slate-400">Anda belum mengajukan artikel.</p>` : `
                                     <div class="space-y-3">
-                                        ${myArticles.map(a => `
-                                            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
-                                                <div class="min-w-0">
-                                                    <div class="font-extrabold text-sm text-slate-900 truncate">${a.title}</div>
-                                                    <div class="text-[11px] font-semibold text-slate-400 mt-0.5">${formatWaktu(a.created_at)}</div>
+                                        ${myArticles.map(a => {
+                                            const aViews = getArticleViews(a);
+                                            const aComments = getArticleComments(a.id).length;
+                                            return `
+                                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                                    <div class="min-w-0">
+                                                        <div onclick="${a.status === 'approved' ? `window.openArticlePopup('${a.id}')` : ''}" class="font-extrabold text-sm text-slate-900 ${a.status === 'approved' ? 'hover:text-blue-600 cursor-pointer' : ''} truncate">${a.title}</div>
+                                                        <div class="text-[11px] font-semibold text-slate-400 mt-1 flex flex-wrap items-center gap-2.5">
+                                                            <span><i class="far fa-clock mr-1"></i>${formatWaktu(a.created_at)}</span>
+                                                            ${a.status === 'approved' ? `
+                                                                <span class="text-blue-600 font-extrabold"><i class="far fa-eye mr-1"></i>${aViews}x dibaca</span>
+                                                                <span class="text-slate-600 font-bold"><i class="far fa-comment-dots mr-1"></i>${aComments} komentar</span>
+                                                            ` : ''}
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2 shrink-0">
+                                                        ${a.status === 'approved' ? `
+                                                            <span class="px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-extrabold text-blue-600 flex items-center gap-1">
+                                                                <i class="far fa-eye"></i> ${aViews}
+                                                            </span>
+                                                        ` : ''}
+                                                        <span class="px-3 py-1 rounded-full text-xs font-extrabold ${a.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : a.status === 'draft' ? 'bg-slate-200 text-slate-700' : 'bg-amber-100 text-amber-700'}">
+                                                            ${a.status === 'approved' ? 'Tayang' : a.status === 'draft' ? 'Draf' : 'Menunggu Admin'}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                                <span class="px-3 py-1 rounded-full text-xs font-extrabold ${a.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : a.status === 'draft' ? 'bg-slate-200 text-slate-700' : 'bg-amber-100 text-amber-700'}">
-                                                    ${a.status === 'approved' ? 'Tayang' : a.status === 'draft' ? 'Draf' : 'Menunggu Admin'}
-                                                </span>
-                                            </div>
-                                        `).join('')}
+                                            `;
+                                        }).join('')}
                                     </div>
                                 `}
                             </div>
@@ -3126,6 +3241,7 @@
 
         const init = async () => {
             renderApp();
+            checkDynamicShareEndpoint();
             await autoSetupDatabase();
             if (!IS_PREVIEW && dbClient) {
                 const { data } = await dbClient.auth.getSession();
