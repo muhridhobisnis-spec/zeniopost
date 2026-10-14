@@ -14,16 +14,16 @@
     <meta property="og:url" content="https://zeniopost.vercel.app/" id="og-url">
     <meta property="og:title" content="Zeniopost - Portal Berita Digital" id="og-title">
     <meta property="og:description" content="Platform berita digital terpercaya dari masyarakat untuk masyarakat." id="og-desc">
-    <meta property="og:image" content="https://res.cloudinary.com/dtz0urit6/image/upload/w_1200,h_630,c_pad,b_white,f_jpg,q_auto:good/cloudinary-tools-uploads/hegel7vcixbjdx4brj2l.jpg" id="og-image">
-    <meta property="og:image:secure_url" content="https://res.cloudinary.com/dtz0urit6/image/upload/w_1200,h_630,c_pad,b_white,f_jpg,q_auto:good/cloudinary-tools-uploads/hegel7vcixbjdx4brj2l.jpg" id="og-image-secure">
+    <meta property="og:image" content="https://res.cloudinary.com/dtz0urit6/image/upload/w_1200,h_630,c_pad,b_white,f_jpg,q_auto:good/cloudinary-tools-uploads/h5nux7dooatoayqdlpng.jpg" id="og-image">
+    <meta property="og:image:secure_url" content="https://res.cloudinary.com/dtz0urit6/image/upload/w_1200,h_630,c_pad,b_white,f_jpg,q_auto:good/cloudinary-tools-uploads/h5nux7dooatoayqdlpng.jpg" id="og-image-secure">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
 
     <!-- Favicon & Preload Logo Utama -->
-    <link rel="icon" id="site-favicon" type="image/jpeg" href="https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/hegel7vcixbjdx4brj2l">
-    <link rel="preload" as="image" href="https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/hegel7vcixbjdx4brj2l">
+    <link rel="icon" id="site-favicon" type="image/jpeg" href="https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/h5nux7dooatoayqdlpng">
+    <link rel="preload" as="image" href="https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/h5nux7dooatoayqdlpng">
 
     <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -188,8 +188,21 @@
         const IS_PREVIEW = false; 
         const DB_URL = "https://zwezerwhvqsauohbfxkq.supabase.co"; 
         const DB_ANON_KEY = "sb_publishable_6wEL_RA1TIkENs1ZAyqtCg_1L5GjjjW"; 
-        const DEFAULT_LOGO_URL = "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/hegel7vcixbjdx4brj2l";
+        const DEFAULT_LOGO_URL = "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/h5nux7dooatoayqdlpng";
         const PAGE_SIZE = 6; // Jumlah berita per tahap untuk tombol "Muat Lebih Banyak"
+
+        // Pastikan migrasi otomatis ke logo terbaru jika browser masih menyimpan URL logo default lama
+        const OLD_DEFAULT_LOGOS = [
+            "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/hegel7vcixbjdx4brj2l",
+            "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/dihjwoqgvxak1am7vhur",
+            "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/zcquxuy5sud0gbzvzvxt",
+            "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/seblk6ukkt9ukhjgaqup",
+            "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/gyiscmvuxv4olklenjcg"
+        ];
+        const savedCustomLogo = localStorage.getItem('zeniopost_custom_logo_url');
+        if (!savedCustomLogo || OLD_DEFAULT_LOGOS.includes(savedCustomLogo)) {
+            localStorage.setItem('zeniopost_custom_logo_url', DEFAULT_LOGO_URL);
+        }
 
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         const dbClient = IS_PREVIEW ? null : createClient(DB_URL, DB_ANON_KEY);
@@ -206,8 +219,8 @@
             activeTopicId: null,
             visibleCount: PAGE_SIZE,
             logoUrl: localStorage.getItem('zeniopost_custom_logo_url') || DEFAULT_LOGO_URL,
-            logoHeightMobile: Number(localStorage.getItem('zeniopost_logo_h_mobile')) || 44,
-            logoHeightDesktop: Number(localStorage.getItem('zeniopost_logo_h_desktop')) || 58,
+            logoHeightMobile: Math.max(48, Number(localStorage.getItem('zeniopost_logo_h_mobile')) || 52),
+            logoHeightDesktop: Math.max(62, Number(localStorage.getItem('zeniopost_logo_h_desktop')) || 66),
             articles: [],
             topics: [],
             comments: [],
@@ -632,17 +645,17 @@
                 if (sLogo && sLogo.setting_value) {
                     try {
                         const parsed = JSON.parse(sLogo.setting_value);
-                        if (parsed.logoUrl) {
+                        if (parsed.logoUrl && !OLD_DEFAULT_LOGOS.includes(parsed.logoUrl)) {
                             appState.logoUrl = parsed.logoUrl;
                             localStorage.setItem('zeniopost_custom_logo_url', parsed.logoUrl);
                         }
                         if (parsed.logoHeightMobile) {
-                            appState.logoHeightMobile = Number(parsed.logoHeightMobile);
-                            localStorage.setItem('zeniopost_logo_h_mobile', String(parsed.logoHeightMobile));
+                            appState.logoHeightMobile = Math.max(48, Number(parsed.logoHeightMobile));
+                            localStorage.setItem('zeniopost_logo_h_mobile', String(appState.logoHeightMobile));
                         }
                         if (parsed.logoHeightDesktop) {
-                            appState.logoHeightDesktop = Number(parsed.logoHeightDesktop);
-                            localStorage.setItem('zeniopost_logo_h_desktop', String(parsed.logoHeightDesktop));
+                            appState.logoHeightDesktop = Math.max(62, Number(parsed.logoHeightDesktop));
+                            localStorage.setItem('zeniopost_logo_h_desktop', String(appState.logoHeightDesktop));
                         }
                         const fav = document.getElementById('site-favicon');
                         if (fav && appState.logoUrl) fav.href = appState.logoUrl;
@@ -800,7 +813,7 @@
                             return `
                                 <div onclick="${clickAction}" class="group cursor-pointer bg-slate-50 hover:bg-white rounded-2xl overflow-hidden border border-slate-200/80 hover:border-blue-300 transition shadow-sm flex flex-col justify-between">
                                     <div>
-                                        <div class="h-28 bg-slate-200 overflow-hidden relative">
+                                        <div class="w-full aspect-video bg-slate-200 overflow-hidden relative">
                                             <img src="${r.image_url}" alt="${r.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                                             <span class="absolute top-2 left-2 bg-slate-900/75 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">${tName}</span>
                                         </div>
@@ -1755,15 +1768,11 @@
             return `<span class="text-slate-800 font-bold truncate">${parsed.name}</span>`;
         };
 
-        // Helper merender Avatar Penulis (Foto Asli Akun / Inisial Nama / Ikon Tamu)
+        // Helper merender Avatar Penulis (Tanpa Foto Profil untuk Post Resmi Admin Zeniopost)
         const renderAuthorAvatar = (article, info = null, sizeClasses = 'w-10 h-10 text-sm') => {
             const parsed = info || parseAuthorInfo(article);
             if (article.is_official) {
-                return `
-                    <div class="${sizeClasses} rounded-full bg-blue-600 text-white flex items-center justify-center font-extrabold shrink-0 shadow-sm">
-                        <i class="fas fa-newspaper"></i>
-                    </div>
-                `;
+                return '';
             }
             if (parsed.avatarUrl) {
                 return `<img src="${parsed.avatarUrl}" alt="${parsed.name}" class="${sizeClasses} rounded-full aspect-square object-cover border border-slate-200 shrink-0 shadow-sm">`;
@@ -1846,7 +1855,7 @@
                     <!-- Header Pop-up Bersih & Proporsional -->
                     <div class="p-4 px-5 md:px-6 bg-white border-b border-slate-100 flex justify-between items-center gap-3 sticky top-0 z-20">
                         <div class="flex items-center shrink-0">
-                            <img src="${getLogoUrl()}" alt="Logo Zeniopost" onerror="this.src='${getLogoFallbackUrl()}'" style="height:${Math.max(36, appState.logoHeightMobile)}px;" class="w-auto max-w-[180px] sm:max-w-[220px] object-contain block">
+                            <img src="${getLogoUrl()}" alt="Logo Zeniopost" onerror="this.src='${getLogoFallbackUrl()}'" style="height:${Math.max(42, appState.logoHeightMobile - 4)}px;" class="w-auto max-w-[190px] sm:max-w-[240px] object-contain block">
                         </div>
                         <div class="flex items-center gap-1.5 md:gap-2 flex-wrap justify-end">
                             <button type="button" onclick="window.toggleSaveArticle('${a.id}', event); if(window.isUserLoggedIn()) window.openArticlePopup('${a.id}')" class="px-3.5 py-2 rounded-xl text-xs font-extrabold border flex items-center gap-1.5 transition ${isGuest ? 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100' : saved ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-600 border-slate-200'}">
@@ -1867,8 +1876,9 @@
 
                     <!-- Isi Artikel Scrollable -->
                     <div class="overflow-y-auto p-5 md:p-6 space-y-5 flex-1">
-                        <div class="rounded-2xl overflow-hidden bg-slate-100 border border-slate-100">
-                            <img src="${a.image_url}" alt="${a.title}" class="w-full max-h-96 object-cover">
+                        <!-- Gambar Berita Rasio 16:9 -->
+                        <div class="w-full aspect-video rounded-2xl overflow-hidden bg-slate-100 border border-slate-100">
+                            <img src="${a.image_url}" alt="${a.title}" class="w-full h-full object-cover">
                         </div>
                         <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-snug">${a.title}</h1>
 
@@ -1934,7 +1944,9 @@
                         <button onclick="window.closeModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-red-500 text-white flex items-center justify-center"><i class="fas fa-times"></i></button>
                     </div>
                     <div class="p-6 overflow-y-auto space-y-4">
-                        <img src="${imgUrl}" class="w-full max-h-72 object-cover rounded-2xl border border-slate-200">
+                        <div class="w-full aspect-video rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+                            <img src="${imgUrl}" class="w-full h-full object-cover">
+                        </div>
                         <h1 class="text-2xl font-extrabold text-slate-900">${title}</h1>
                         <div class="text-xs font-bold text-slate-500">Oleh: <span class="text-slate-900">${authorName}</span> • ${formatWaktu(new Date().toISOString())}</div>
                         <div class="pt-3 border-t border-slate-100 text-slate-700 leading-relaxed">${sanitizeAndFormatArticleHtml(editorData.html || '<p><i>Belum ada isi teks berita...</i></p>')}</div>
@@ -1951,58 +1963,36 @@
         };
 
         // =====================================================================
-        // 13. NAVIGASI UTAMA & FILTER HORIZONTAL / MUAT LEBIH BANYAK
+        // 13. NAVIGASI UTAMA, FILTER PENCARIAN, TANGGAL & PRATINJAU GAMBAR
         // =====================================================================
-        window.switchUserDashTab = (tab) => {
-            appState.userDashTab = tab;
-            renderApp();
-        };
-
         window.app = {
             navigate: (view, data = null) => {
-                // Kunci navigasi ke menu Simpan Berita apabila tamu belum login
-                if (view === 'saved' && !appState.currentUser) {
-                    showToast('<i class="fas fa-lock mr-1.5"></i> Daftar Berita Tersimpan hanya untuk pengguna terdaftar. Silakan masuk terlebih dahulu!', 'error');
-                    appState.view = 'account';
-                    appState.accountTab = 'login';
-                    renderApp();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    return;
-                }
-
-                // Jika pengguna memiliki akun dan memilih menu tulis/submit, arahkan otomatis ke Studio Publikasi Pribadi di Dashboard Akun
-                if (view === 'submit' && appState.currentUser) {
-                    appState.view = 'account';
-                    appState.userDashTab = 'publish';
-                    renderApp();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    return;
-                }
-
                 appState.view = view;
                 appState.visibleCount = PAGE_SIZE;
-
                 if (view === 'article') {
-                    const found = typeof data === 'string' ? appState.articles.find(x => String(x.id) === String(data)) : data;
+                    const found = typeof data === 'string'
+                        ? appState.articles.find(x => String(x.id) === String(data))
+                        : data;
                     appState.readArticle = found || null;
                     if (found) {
                         updateMetaTags(found);
                         safeUpdateHistory(found.id, found.title);
                     }
                 } else if (view === 'topics') {
-                    appState.activeTopicId = data;
+                    if (data !== null) appState.activeTopicId = data;
                     safeUpdateHistory(null, 'Zeniopost');
-                } else if (view === 'chat' && appState.currentUser) {
-                    markMessagesAsRead(appState.currentUser.id, 'user');
                 } else {
-                    appState.readArticle = null;
+                    if (view === 'home') appState.activeTopicId = null;
+                    if (view === 'chat' && appState.currentUser) {
+                        markMessagesAsRead(appState.currentUser.id, 'user');
+                    }
                     safeUpdateHistory(null, 'Zeniopost');
                 }
                 renderApp();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
-            selectHorizontalTopic: (topicId) => {
-                appState.activeTopicId = topicId || null;
+            selectHorizontalTopic: (topicId = null) => {
+                appState.activeTopicId = topicId;
                 appState.visibleCount = PAGE_SIZE;
                 renderApp();
             },
@@ -2014,14 +2004,21 @@
                 if (!IS_PREVIEW && dbClient) await dbClient.auth.signOut();
                 appState.user = null;
                 app.navigate('home');
-                showToast('Admin telah keluar.', 'success');
+                showToast('Anda telah keluar dari mode Admin.', 'info');
             }
+        };
+
+        window.switchUserDashTab = (tab) => {
+            appState.userDashTab = tab;
+            renderApp();
         };
 
         window.handleSearch = (val) => {
             appState.searchQuery = val || '';
             appState.visibleCount = PAGE_SIZE;
-            if (!['home', 'trending', 'topics', 'saved'].includes(appState.view)) appState.view = 'home';
+            if (appState.view !== 'home' && appState.view !== 'topics') {
+                appState.view = 'home';
+            }
             const mainEl = document.getElementById('main-content');
             if (mainEl) mainEl.innerHTML = buildMainContent();
         };
@@ -2034,7 +2031,9 @@
         window.handleDateFilter = (val) => {
             appState.filterDate = val || '';
             appState.visibleCount = PAGE_SIZE;
-            if (!['home', 'trending', 'topics', 'saved'].includes(appState.view)) appState.view = 'home';
+            if (appState.view !== 'home' && appState.view !== 'topics') {
+                appState.view = 'home';
+            }
             renderApp();
         };
 
@@ -2058,23 +2057,6 @@
             }
         };
 
-        // Tombol X (Batal) untuk Membatalkan Unggah Gambar Berita
-        window.clearImageUpload = (inputId, previewId = null, wrapId = null) => {
-            const inp = document.getElementById(inputId);
-            if (inp) inp.value = '';
-            if (previewId) {
-                const el = document.getElementById(previewId);
-                if (el) {
-                    el.style.backgroundImage = '';
-                    el.classList.add('hidden');
-                }
-            }
-            if (wrapId) {
-                const w = document.getElementById(wrapId);
-                if (w) w.classList.add('hidden');
-            }
-        };
-
         window.previewAdminOfficialImage = (event) => {
             const f = event.target.files?.[0];
             const wrap = document.getElementById('preview_a_wrap');
@@ -2089,14 +2071,26 @@
             }
         };
 
+        window.clearImageUpload = (inputId, previewId = null, wrapId = null) => {
+            const inp = document.getElementById(inputId);
+            const prev = previewId ? document.getElementById(previewId) : null;
+            const wrap = wrapId ? document.getElementById(wrapId) : null;
+            if (inp) inp.value = '';
+            if (prev) {
+                prev.style.backgroundImage = '';
+                prev.classList.add('hidden');
+            }
+            if (wrap) wrap.classList.add('hidden');
+        };
+
         // =====================================================================
-        // 14. PUBLIKASI ARTIKEL PRIBADI (USER LOGIN) & PENGAJUAN ARTIKEL (TAMU)
+        // 14. PENGAJUAN ARTIKEL (USER BERAKUN & TAMU WAJIB MELALUI ACC ADMIN)
         // =====================================================================
         window.submitPublicForm = async (e, targetStatus = null) => {
             if (e) e.preventDefault();
             const isLoggedUser = Boolean(appState.currentUser);
-            // Pengguna yang memiliki akun langsung terbit otomatis ('approved'), sedangkan tamu menunggu admin ('pending')
-            const finalStatus = targetStatus ? targetStatus : (isLoggedUser ? 'approved' : 'pending');
+            // Semua artikel dari pengguna (baik yang punya akun maupun tamu) wajib berstatus 'pending' (menunggu ACC Admin), kecuali disimpan sebagai 'draft'
+            const finalStatus = targetStatus === 'draft' ? 'draft' : 'pending';
 
             const title = (document.getElementById('f_title')?.value || '').trim();
             const topicId = document.getElementById('f_topic')?.value || '';
@@ -2125,7 +2119,7 @@
                 } else {
                     showToast('Pilih file gambar sampul artikel terlebih dahulu.', 'error');
                     if (btn) {
-                        btn.innerHTML = isLoggedUser ? '<i class="fas fa-globe mr-1"></i> Publikasikan Sekarang' : '<i class="fas fa-paper-plane mr-1"></i> Kirim Pengajuan';
+                        btn.innerHTML = '<i class="fas fa-paper-plane mr-1"></i> Ajukan untuk Disetujui Admin';
                         btn.disabled = false;
                     }
                     return;
@@ -2171,8 +2165,8 @@
                         appState.userDashTab = 'drafts';
                     }
                     renderApp();
-                } else if (isLoggedUser && finalStatus === 'approved') {
-                    showToast('<i class="fas fa-check-circle mr-1"></i> Artikel Anda berhasil dipublikasikan dan langsung tayang!', 'success');
+                } else if (isLoggedUser) {
+                    showToast('<i class="fas fa-paper-plane mr-1"></i> Artikel berhasil diajukan! Menunggu persetujuan (ACC) Admin sebelum dipublikasikan.', 'success');
                     appState.view = 'account';
                     appState.userDashTab = 'articles';
                     renderApp();
@@ -2183,7 +2177,7 @@
             } catch (err) {
                 showToast(err.message || 'Gagal menyimpan artikel.', 'error');
                 if (btn) {
-                    btn.innerHTML = isLoggedUser ? '<i class="fas fa-globe mr-1"></i> Publikasikan Sekarang' : '<i class="fas fa-paper-plane mr-1"></i> Kirim Pengajuan';
+                    btn.innerHTML = '<i class="fas fa-paper-plane mr-1"></i> Ajukan untuk Disetujui Admin';
                     btn.disabled = false;
                 }
             }
@@ -2509,19 +2503,19 @@
 
         window.resetDefaultLogoSettings = async () => {
             appState.logoUrl = DEFAULT_LOGO_URL;
-            appState.logoHeightMobile = 44;
-            appState.logoHeightDesktop = 58;
+            appState.logoHeightMobile = 52;
+            appState.logoHeightDesktop = 66;
             localStorage.setItem('zeniopost_custom_logo_url', DEFAULT_LOGO_URL);
-            localStorage.setItem('zeniopost_logo_h_mobile', '44');
-            localStorage.setItem('zeniopost_logo_h_desktop', '58');
+            localStorage.setItem('zeniopost_logo_h_mobile', '52');
+            localStorage.setItem('zeniopost_logo_h_desktop', '66');
             if (!IS_PREVIEW && dbClient) {
                 try {
                     await dbClient.from('zp_site_settings').upsert([{
                         setting_key: 'site_logo',
                         setting_value: JSON.stringify({
                             logoUrl: DEFAULT_LOGO_URL,
-                            logoHeightMobile: 44,
-                            logoHeightDesktop: 58
+                            logoHeightMobile: 52,
+                            logoHeightDesktop: 66
                         }),
                         updated_at: new Date().toISOString()
                     }], { onConflict: 'setting_key' });
@@ -2560,16 +2554,16 @@
         const renderHeader = () => {
             const unreadUserChats = getUnreadChatCountForUser();
             const unreadAdminChats = getUnreadChatCountForAdmin();
-            const hMob = appState.logoHeightMobile || 44;
-            const hDesk = appState.logoHeightDesktop || 58;
+            const hMob = appState.logoHeightMobile || 52;
+            const hDesk = appState.logoHeightDesktop || 66;
 
             return `
                 <style>
-                    .zp-dynamic-logo { height: ${hMob}px; max-width: 155px; }
-                    @media (min-width: 640px) { .zp-dynamic-logo { height: ${Math.round((hMob + hDesk) / 2)}px; max-width: 200px; } }
-                    @media (min-width: 768px) { .zp-dynamic-logo { height: ${hDesk}px; max-width: 250px; } }
+                    .zp-dynamic-logo { height: ${hMob}px; max-width: 175px; }
+                    @media (min-width: 640px) { .zp-dynamic-logo { height: ${Math.round((hMob + hDesk) / 2)}px; max-width: 225px; } }
+                    @media (min-width: 768px) { .zp-dynamic-logo { height: ${hDesk}px; max-width: 280px; } }
                 </style>
-                <header class="bg-white/95 backdrop-blur-md sticky top-0 z-50 w-full max-w-full min-w-0 min-h-[72px] sm:min-h-[84px] md:min-h-[96px] py-2 shadow-sm flex justify-between items-center gap-2 sm:gap-3 md:gap-6 px-3 sm:px-5 md:px-8 border-b border-slate-100">
+                <header class="bg-white/95 backdrop-blur-md sticky top-0 z-50 w-full max-w-full min-w-0 min-h-[76px] sm:min-h-[88px] md:min-h-[98px] py-2 shadow-sm flex justify-between items-center gap-2 sm:gap-3 md:gap-6 px-3 sm:px-5 md:px-8 border-b border-slate-100">
                     <!-- Logo Utama Proporsional Tanpa Shape -->
                     <div class="flex items-center justify-start cursor-pointer shrink-0 py-1" onclick="app.navigate('home')" title="Beranda Zeniopost">
                         <img src="${getLogoUrl()}" alt="Logo Zeniopost" fetchpriority="high" decoding="async" onerror="this.src='${getLogoFallbackUrl()}'" class="zp-dynamic-logo w-auto object-contain block">
@@ -2678,7 +2672,7 @@
             `;
         };
 
-        // Kartu Berita Clean Tanpa Line Hitam + Menampilkan Foto Akun Penulis & Badge Centang Abu-abu/Biru
+        // Kartu Berita Clean Tanpa Line Hitam + Gambar Rasio 16:9 + Menampilkan Foto Akun Penulis & Badge Centang Abu-abu/Biru
         const renderArticleCard = (a, rankNumber = null) => {
             const info = parseAuthorInfo(a);
             const topicObj = appState.topics.find(t => String(t.id) === String(a.topic_id));
@@ -2692,7 +2686,7 @@
             return `
                 <article onclick="window.openArticlePopup('${a.id}')" class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 hover-scale cursor-pointer group flex flex-col justify-between min-w-0 w-full">
                     <div>
-                        <div class="relative h-48 sm:h-52 overflow-hidden bg-slate-100">
+                        <div class="relative w-full aspect-video overflow-hidden bg-slate-100">
                             <img src="${a.image_url}" alt="${a.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                             <span class="absolute top-3 left-3 bg-slate-900/75 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1 rounded-full">${topicName}</span>
 
@@ -2755,7 +2749,7 @@
         // =====================================================================
         const renderArticleFormBlock = (isPersonalPublish = false) => {
             return `
-                <form id="public-form" onsubmit="window.submitPublicForm(event, '${isPersonalPublish ? 'approved' : 'pending'}')" class="space-y-5">
+                <form id="public-form" onsubmit="window.submitPublicForm(event, 'pending')" class="space-y-5">
                     <div>
                         <label class="block text-xs font-extrabold text-slate-600 mb-1.5">Judul Berita Utama</label>
                         <input type="text" id="f_title" required placeholder="Ketik judul berita yang menarik dan informatif..." class="w-full p-3.5 sm:p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:border-blue-500">
@@ -2776,11 +2770,11 @@
                     </div>
 
                     <div class="border border-slate-200 border-dashed rounded-2xl bg-slate-50/70 p-4">
-                        <label class="block text-xs font-extrabold text-slate-600 mb-2"><i class="far fa-image text-blue-600 mr-1"></i> Unggah Gambar Sampul Berita</label>
+                        <label class="block text-xs font-extrabold text-slate-600 mb-2"><i class="far fa-image text-blue-600 mr-1"></i> Unggah Gambar Sampul Berita (Rasio 16:9)</label>
                         <input type="file" id="f_image" accept="image/*" onchange="previewImageUpload(event, 'preview_f', 'preview_f_wrap')" class="w-full text-xs sm:text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-blue-600 file:text-white cursor-pointer">
                     </div>
                     <div id="preview_f_wrap" class="hidden relative">
-                        <div id="preview_f" class="w-full h-48 bg-cover bg-center rounded-2xl border border-slate-200"></div>
+                        <div id="preview_f" class="w-full aspect-video bg-cover bg-center rounded-2xl border border-slate-200"></div>
                         <button type="button" onclick="window.clearImageUpload('f_image', 'preview_f', 'preview_f_wrap')" title="Batalkan Gambar" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center shadow-md transition">
                             <i class="fas fa-times"></i>
                         </button>
@@ -2810,7 +2804,7 @@
                                         <span>${appState.currentUser?.full_name}</span>
                                         <i class="fas fa-check-circle text-slate-400" title="Penulis Terverifikasi"></i>
                                     </div>
-                                    <div class="text-[11px] font-semibold text-blue-600 truncate">Diterbitkan langsung dengan identitas akun resmi Anda</div>
+                                    <div class="text-[11px] font-semibold text-blue-600 truncate">Akan tampil dengan foto profil & centang akun Anda setelah disetujui (ACC) Admin</div>
                                 </div>
                             </div>
                         </div>
@@ -2824,7 +2818,7 @@
                             <i class="fas fa-save text-slate-600"></i> Simpan Draf
                         </button>
                         <button type="submit" id="btn_f" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3.5 px-4 rounded-2xl shadow-md text-xs md:text-sm flex items-center justify-center gap-2 transition">
-                            <i class="fas ${isPersonalPublish ? 'fa-globe' : 'fa-paper-plane'}"></i> ${isPersonalPublish ? (appState.editingDraftId ? 'Perbarui & Terbitkan' : 'Publikasikan Sekarang') : 'Kirim Pengajuan'}
+                            <i class="fas fa-paper-plane"></i> ${appState.editingDraftId ? 'Perbarui & Ajukan ke Admin' : 'Ajukan untuk Disetujui Admin'}
                         </button>
                     </div>
                 </form>
@@ -2832,7 +2826,7 @@
         };
 
         const buildMainContent = () => {
-            // A. HALAMAN BACA ARTIKEL PENUH (DENGAN FOTO PROFIL AKUN RESMI & CENTANG ABU-ABU/BIRU)
+            // A. HALAMAN BACA ARTIKEL PENUH (TANPA SPACE KOSONG DI ATAS + GAMBAR 16:9 + IDENTITAS PENULIS)
             if (appState.view === 'article' && appState.readArticle) {
                 const a = appState.readArticle;
                 if (appState.countedInOpen !== String(a.id)) {
@@ -2840,12 +2834,11 @@
                     recordArticleView(a.id);
                 }
                 const info = parseAuthorInfo(a);
-                const isGuest = !appState.currentUser;
                 const saved = isArticleSaved(a.id);
 
                 return `
                     <div class="max-w-3xl mx-auto bg-white min-h-screen animate-fade pb-20 shadow-sm">
-                        <div class="p-4 flex justify-between items-center gap-2 sticky top-16 sm:top-20 md:top-24 bg-white/95 backdrop-blur-md z-40 border-b border-slate-100">
+                        <div class="px-4 py-3 flex justify-between items-center gap-2 bg-white border-b border-slate-100">
                             <button onclick="app.navigate('home')" class="font-bold text-slate-700 bg-slate-50 border border-slate-200/80 hover:bg-slate-100 px-4 py-2 rounded-full text-xs md:text-sm transition"><i class="fas fa-arrow-left mr-2"></i>Kembali</button>
                             <div class="flex items-center gap-2">
                                 <button onclick="window.toggleSaveArticle('${a.id}', event)" class="px-4 py-2 rounded-full text-xs font-extrabold border transition ${saved ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-blue-50 hover:text-blue-600'}">
@@ -2854,7 +2847,9 @@
                                 <button onclick="window.shareArticle('${a.id}')" class="bg-blue-600 text-white px-4 py-2 rounded-full text-xs font-extrabold shadow-sm"><i class="fas fa-share-nodes mr-1"></i> Bagikan</button>
                             </div>
                         </div>
-                        <img src="${a.image_url}" alt="${a.title}" class="w-full max-h-[440px] object-cover bg-slate-100">
+                        <div class="w-full aspect-video bg-slate-100 overflow-hidden">
+                            <img src="${a.image_url}" alt="${a.title}" class="w-full h-full object-cover">
+                        </div>
                         <div class="p-5 sm:p-6 md:p-10">
                             <h1 class="text-2xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight break-words">${a.title}</h1>
                             <div class="flex flex-wrap items-center justify-between gap-4 mb-8 p-4 rounded-2xl bg-slate-50/90 border border-slate-100">
@@ -3010,13 +3005,13 @@
                     </div>
                 `;
             }
-
-            // F. HALAMAN DASHBOARD AKUN PENGGUNA (UI MODERN, RAPI, TANPA LINE HITAM + PUBLIKASI PRIBADI LANGSUNG)
+            // F. HALAMAN DASHBOARD AKUN PENGGUNA (UI MODERN, RAPI, TANPA LINE HITAM + PENGAJUAN WAJIB ACC ADMIN)
             if (appState.view === 'account') {
                 if (appState.currentUser) {
                     const u = appState.currentUser;
                     const myArticles = appState.articles.filter(a => String(a.user_id) === String(u.id));
                     const myApprovedArticles = myArticles.filter(a => a.status === 'approved');
+                    const myPendingArticles = myArticles.filter(a => a.status === 'pending');
                     const myDraftArticles = myArticles.filter(a => a.status === 'draft');
                     const totalMyViews = myApprovedArticles.reduce((acc, cur) => acc + getArticleViews(cur), 0);
                     const totalMyComments = myApprovedArticles.reduce((acc, cur) => acc + getArticleComments(cur.id).length, 0);
@@ -3103,10 +3098,10 @@
                                         <i class="fas fa-chart-pie"></i> Ringkasan & Analitik
                                     </button>
                                     <button onclick="window.switchUserDashTab('publish')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 ${appState.userDashTab === 'publish' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}">
-                                        <i class="fas fa-feather-pointed"></i> ${appState.editingDraftId ? 'Edit Artikel / Draf' : 'Publikasi Berita Pribadi'}
+                                        <i class="fas fa-feather-pointed"></i> ${appState.editingDraftId ? 'Edit Artikel / Draf' : 'Tulis & Ajukan Berita'}
                                     </button>
                                     <button onclick="window.switchUserDashTab('articles')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 ${appState.userDashTab === 'articles' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}">
-                                        <i class="fas fa-newspaper"></i> Artikel Terpublikasi (${myApprovedArticles.length})
+                                        <i class="fas fa-newspaper"></i> Artikel Saya (${myApprovedArticles.length} Tayang${myPendingArticles.length > 0 ? ` • ${myPendingArticles.length} Menunggu ACC` : ''})
                                     </button>
                                     <button onclick="window.switchUserDashTab('drafts')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 ${appState.userDashTab === 'drafts' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}">
                                         <i class="fas fa-folder-open"></i> Draf Tersimpan (${myDraftArticles.length})
@@ -3120,10 +3115,11 @@
                                     <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-slate-100">
                                         <div>
                                             <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                                                <i class="fas fa-feather-pointed text-blue-600"></i> ${appState.editingDraftId ? 'Edit & Perbarui Artikel Anda' : 'Studio Publikasi Berita Pribadi'}
+                                                <i class="fas fa-feather-pointed text-blue-600"></i> ${appState.editingDraftId ? 'Edit & Ajukan Artikel Anda' : 'Studio Penulisan Berita Akun Resmi'}
                                             </h3>
-                                            <p class="text-xs font-semibold text-slate-500 mt-0.5">Artikel yang Anda terbitkan langsung tayang ke publik lengkap dengan foto profil dan centang terverifikasi Anda.</p>
+                                            <p class="text-xs font-semibold text-slate-500 mt-0.5">Artikel yang Anda kirim akan ditinjau dan disetujui (ACC) oleh Admin terlebih dahulu sebelum tayang ke publik lengkap dengan foto profil dan centang terverifikasi Anda.</p>
                                         </div>
+                                        <span class="text-[11px] font-extrabold bg-blue-50 text-blue-700 px-3 py-1 rounded-full">Menunggu ACC Admin</span>
                                         ${appState.editingDraftId ? `
                                             <button onclick="appState.editingDraftId=null; window.switchUserDashTab('publish')" class="text-xs font-extrabold text-slate-500 hover:text-slate-800 bg-slate-100 px-3 py-1.5 rounded-xl">Batal Edit</button>
                                         ` : ''}
@@ -3147,7 +3143,7 @@
                                                         <div class="text-[11px] font-semibold text-slate-400 mt-0.5">Disimpan: ${formatWaktu(d.created_at)}</div>
                                                     </div>
                                                     <div class="flex items-center gap-2 shrink-0">
-                                                        <button onclick="window.loadDraftToEditor('${d.id}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl"><i class="fas fa-edit mr-1"></i> Lanjutkan & Terbitkan</button>
+                                                        <button onclick="window.loadDraftToEditor('${d.id}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl"><i class="fas fa-edit mr-1"></i> Lanjutkan & Ajukan</button>
                                                         <button onclick="window.deleteMyArticle('${d.id}')" class="bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 text-xs font-extrabold px-3 py-2 rounded-xl"><i class="fas fa-trash"></i></button>
                                                     </div>
                                                 </div>
@@ -3156,7 +3152,7 @@
                                     `}
                                 </div>
                             ` : `
-                                <!-- RINGKASAN ANALITIK & DAFTAR ARTIKEL TERPUBLIKASI -->
+                                <!-- RINGKASAN ANALITIK, ANTREAN ACC ADMIN & DAFTAR ARTIKEL TERPUBLIKASI -->
                                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                                     <div class="p-5 rounded-3xl bg-white border border-slate-100 shadow-sm flex items-center gap-4">
                                         <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0"><i class="far fa-eye"></i></div>
@@ -3173,36 +3169,67 @@
                                         </div>
                                     </div>
                                     <div class="p-5 rounded-3xl bg-white border border-slate-100 shadow-sm flex items-center gap-4">
+                                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0"><i class="fas fa-hourglass-half"></i></div>
+                                        <div>
+                                            <div class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Menunggu ACC</div>
+                                            <div class="text-2xl font-black text-slate-900 mt-0.5">${myPendingArticles.length}</div>
+                                        </div>
+                                    </div>
+                                    <div class="p-5 rounded-3xl bg-white border border-slate-100 shadow-sm flex items-center gap-4">
                                         <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0"><i class="far fa-comments"></i></div>
                                         <div>
                                             <div class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Komentar</div>
                                             <div class="text-2xl font-black text-slate-900 mt-0.5">${totalMyComments}</div>
                                         </div>
                                     </div>
-                                    <div class="p-5 rounded-3xl bg-white border border-slate-100 shadow-sm flex items-center gap-4">
-                                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0"><i class="far fa-folder"></i></div>
-                                        <div>
-                                            <div class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Draf Berita</div>
-                                            <div class="text-2xl font-black text-slate-900 mt-0.5">${myDraftArticles.length}</div>
+                                </div>
+
+                                ${myPendingArticles.length > 0 ? `
+                                    <div class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-100 space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <h3 class="font-extrabold text-base sm:text-lg text-slate-900">Menunggu Persetujuan (ACC) Admin (${myPendingArticles.length})</h3>
+                                                <p class="text-xs font-semibold text-slate-400">Artikel di bawah ini sedang ditinjau Admin dan akan otomatis tayang setelah disetujui</p>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-3">
+                                            ${myPendingArticles.map(pArt => `
+                                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                                    <div class="flex items-center gap-3.5 min-w-0">
+                                                        <img src="${pArt.image_url}" class="w-20 aspect-video rounded-xl object-cover bg-slate-200 shrink-0 border border-slate-200/60">
+                                                        <div class="min-w-0">
+                                                            <div class="font-extrabold text-sm text-slate-900 truncate">${pArt.title}</div>
+                                                            <div class="text-[11px] font-semibold text-slate-400 mt-1 flex flex-wrap items-center gap-2">
+                                                                <span class="bg-blue-50 text-blue-700 font-extrabold px-2.5 py-0.5 rounded-full text-[10px]">Menunggu ACC Admin</span>
+                                                                <span><i class="far fa-clock mr-1"></i>${formatWaktu(pArt.created_at)}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                                        <button onclick="window.loadDraftToEditor('${pArt.id}')" class="bg-white hover:bg-blue-50 text-blue-600 border border-slate-200 text-xs font-extrabold px-3 py-1.5 rounded-xl transition"><i class="fas fa-pen mr-1"></i> Edit</button>
+                                                        <button onclick="window.deleteMyArticle('${pArt.id}')" class="bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 border border-slate-200 text-xs font-extrabold px-2.5 py-1.5 rounded-xl transition"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </div>
+                                            `).join('')}
                                         </div>
                                     </div>
-                                </div>
+                                ` : ''}
 
                                 <div class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-100 space-y-4">
                                     <div class="flex flex-wrap items-center justify-between gap-2">
                                         <div>
-                                            <h3 class="font-extrabold text-lg text-slate-900">Publikasi & Performa Artikel Saya (${myApprovedArticles.length})</h3>
-                                            <p class="text-xs font-semibold text-slate-400">Seluruh berita yang Anda publikasikan beserta statistik pembacanya</p>
+                                            <h3 class="font-extrabold text-lg text-slate-900">Artikel Terpublikasi & Performa Berita Saya (${myApprovedArticles.length})</h3>
+                                            <p class="text-xs font-semibold text-slate-400">Berita yang telah disetujui Admin dan tayang ke publik beserta statistik pembacanya</p>
                                         </div>
-                                        <button onclick="window.switchUserDashTab('publish')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold px-4 py-2 rounded-xl shadow-sm"><i class="fas fa-plus mr-1"></i> Terbitkan Berita</button>
+                                        <button onclick="window.switchUserDashTab('publish')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold px-4 py-2 rounded-xl shadow-sm"><i class="fas fa-plus mr-1"></i> Ajukan Berita Baru</button>
                                     </div>
 
                                     ${myApprovedArticles.length === 0 ? `
                                         <div class="text-center py-12 bg-slate-50/70 rounded-2xl border border-dashed border-slate-200 space-y-3">
                                             <i class="fas fa-feather-pointed text-3xl text-blue-400 block"></i>
-                                            <div class="text-sm font-extrabold text-slate-700">Anda belum mempublikasikan berita</div>
-                                            <p class="text-xs font-semibold text-slate-400 max-w-md mx-auto">Mulai tulis dan publikasikan berita pertama Anda secara langsung dari dashboard akun ini.</p>
-                                            <button onclick="window.switchUserDashTab('publish')" class="bg-blue-600 text-white text-xs font-extrabold px-5 py-2.5 rounded-xl shadow-sm">Mulai Publikasi Sekarang</button>
+                                            <div class="text-sm font-extrabold text-slate-700">Belum ada berita yang tayang</div>
+                                            <p class="text-xs font-semibold text-slate-400 max-w-md mx-auto">Mulai tulis dan ajukan berita dari dashboard akun ini. Setelah disetujui Admin, berita akan tampil di beranda publik.</p>
+                                            <button onclick="window.switchUserDashTab('publish')" class="bg-blue-600 text-white text-xs font-extrabold px-5 py-2.5 rounded-xl shadow-sm">Tulis & Ajukan Berita</button>
                                         </div>
                                     ` : `
                                         <div class="space-y-3">
@@ -3212,7 +3239,7 @@
                                                 return `
                                                     <div class="p-4 rounded-2xl bg-slate-50/80 hover:bg-slate-50 border border-slate-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition">
                                                         <div class="flex items-center gap-3.5 min-w-0">
-                                                            <img src="${a.image_url}" class="w-16 h-14 rounded-xl object-cover bg-slate-200 shrink-0 border border-slate-200/60">
+                                                            <img src="${a.image_url}" class="w-20 aspect-video rounded-xl object-cover bg-slate-200 shrink-0 border border-slate-200/60">
                                                             <div class="min-w-0">
                                                                 <div onclick="window.openArticlePopup('${a.id}')" class="font-extrabold text-sm text-slate-900 hover:text-blue-600 cursor-pointer truncate">${a.title}</div>
                                                                 <div class="text-[11px] font-semibold text-slate-400 mt-1 flex flex-wrap items-center gap-2.5">
